@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e1116">
+<meta name="robots" content="noindex">
+<title>Emily — Meet Day · Bay State Games</title>
+<style>
+  :root{
+    --ink:#0e1116; --panel:#171c24; --panel2:#1f2630; --line:#2c3540;
+    --text:#e8ebef; --dim:#8b95a3;
+    --sn:#e0a33c; --cj:#5fb4e6;
+    --good:#4cc38a; --warn:#e0a33c; --stop:#e0635a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--ink);color:var(--text);font-family:-apple-system,"SF Pro Text",Inter,system-ui,sans-serif;font-size:16px;line-height:1.45;padding:16px 14px 60px;max-width:560px;margin:0 auto}
+  header{margin-bottom:12px}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:6px}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  .sub{color:var(--dim);font-size:13px;margin-top:5px}
+  .hint{font-size:11px;color:var(--dim);text-align:center;margin:0 0 14px}
+
+  input,textarea{font-family:inherit;color:var(--text);background:transparent;border:none;outline:none}
+  input:focus{background:rgba(255,255,255,.07);border-radius:4px}
+
+  /* STICKY BAR: lift toggle · attempts-out counter · clock */
+  .stick{
+    position:sticky;top:8px;z-index:50;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:8px 10px;margin-bottom:10px;
+    box-shadow:0 6px 18px rgba(0,0,0,.45);user-select:none;
+  }
+  .st-top{display:flex;align-items:center;gap:6px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-shrink:0}
+  .seg button{background:none;border:none;color:var(--dim);font:inherit;font-size:12px;font-weight:800;padding:10px 9px;cursor:pointer}
+  .seg button.on{background:var(--panel2);color:var(--text)}
+  #seg-sn.on{color:var(--sn)} #seg-cj.on{color:var(--cj)}
+  .cnt{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;min-width:0}
+  .cbtn{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px;font:inherit;font-weight:800;cursor:pointer}
+  .cbtn.minus{font-size:17px;padding:8px 12px}
+  .cbtn.plus{font-size:12px;padding:4px 7px;color:var(--dim)}
+  #cnum{width:40px;font-size:26px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+  .clab{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);line-height:1.2}
+  .clk{display:flex;align-items:center;gap:5px;cursor:pointer;padding:2px 4px;border-radius:9px;border:1px solid transparent;flex-shrink:0;margin-left:auto}
+  .clk .cl-time{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+  .clk.run{border-color:var(--good)} .clk.run .cl-time{color:var(--good)}
+  .clk.low{border-color:var(--warn)} .clk.low .cl-time{color:var(--warn)}
+  .clk.crit{border-color:var(--stop);animation:pulse .6s infinite alternate} .clk.crit .cl-time{color:var(--stop)}
+  @keyframes pulse{from{box-shadow:0 0 0 0 rgba(224,99,90,0)}to{box-shadow:0 0 0 5px rgba(224,99,90,.22)}}
+  .c2{background:var(--panel2);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:11px;font-weight:700;border-radius:7px;padding:4px 6px;cursor:pointer}
+  .st-take{font-size:13px;font-weight:600;text-align:center;margin-top:7px;padding:6px 8px;border-radius:8px;background:var(--panel2);color:var(--dim)}
+  .st-take.due{background:rgba(224,163,60,.16);color:var(--warn)}
+  .st-take.late{background:rgba(224,99,90,.16);color:var(--stop)}
+
+  /* LIFT CARDS */
+  .lift{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .lift-head{display:flex;justify-content:space-between;align-items:baseline;padding:12px 14px 8px}
+  .lift-name{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .lift.sn .lift-name{color:var(--sn)} .lift.cj .lift-name{color:var(--cj)}
+  .lift-ref{font-size:11px;color:var(--dim)}
+
+  /* warm-up rows (always visible, above attempts) */
+  .wu-cols{display:grid;grid-template-columns:40px 1fr 64px 52px 30px;gap:8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:2px 14px 4px}
+  .wu-list{padding:0 14px}
+  .wu-row{display:grid;grid-template-columns:40px 1fr 64px 52px 30px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;border-radius:8px;cursor:pointer}
+  .wu-row:last-of-type{border-bottom:none}
+  .wu-row input{font-size:15px;font-variant-numeric:tabular-nums;padding:5px 6px;background:var(--panel2);border-radius:6px;width:100%;pointer-events:auto}
+  .wu-row input.aout{text-align:center;color:var(--dim);font-size:13px}
+  .wu-row input.reps{text-align:center}
+  .wu-row .chk{width:26px;height:26px;border:1px solid var(--line);border-radius:7px;display:flex;align-items:center;justify-content:center;color:transparent;font-size:14px;font-weight:800}
+  .wu-row.done{opacity:.42}
+  .wu-row.done .chk{color:var(--good);border-color:var(--good);background:rgba(76,195,138,.12)}
+  .wu-row.due{background:rgba(224,163,60,.13);box-shadow:inset 0 0 0 1px var(--warn)}
+  .wu-row.late{background:rgba(224,99,90,.13);box-shadow:inset 0 0 0 1px var(--stop)}
+  .wu-add{margin:10px 14px 12px;background:var(--panel2);border:1px dashed var(--line);color:var(--dim);font-size:13px;border-radius:8px;padding:8px;width:calc(100% - 28px);cursor:pointer;font-family:inherit}
+
+  /* attempts */
+  .attempts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+  .att{background:var(--panel2);padding:10px 4px 8px;text-align:center}
+  .att .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .att .kgrow{display:flex;align-items:center;gap:2px;margin:2px 0}
+  .att .stp{background:var(--ink);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:16px;font-weight:800;border-radius:7px;width:26px;height:34px;flex-shrink:0;cursor:pointer}
+  .att input.kg{width:100%;min-width:0;font-size:25px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:2px 0}
+  .att .plates{font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;min-height:13px}
+  .att .rng{display:flex;justify-content:center;align-items:center;gap:2px;margin-top:3px}
+  .att .rng input{width:26px;font-size:12px;text-align:center;color:var(--dim);font-variant-numeric:tabular-nums;padding:2px 0;background:var(--ink);border-radius:4px}
+  .att .rng input.pl{color:var(--text);font-weight:700}
+  .att .rng .dot{font-size:10px;color:var(--line)}
+  .att .rlab{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+  .att .mark{font-size:11px;font-weight:700;margin-top:6px;padding:6px 0;border-radius:6px;border:1px solid var(--line);color:var(--dim);cursor:pointer;user-select:none}
+  .att.good{background:rgba(76,195,138,.13)} .att.good .mark{color:var(--good);border-color:var(--good)}
+  .att.miss{background:rgba(224,99,90,.13)} .att.miss .mark{color:var(--stop);border-color:var(--stop)}
+  .sugg{font-size:13px;font-weight:600;color:var(--warn);padding:8px 14px 0;display:none}
+  .sugg.show{display:block}
+  .strategy{padding:10px 14px;font-size:13px;color:#c2c9d2;border-top:1px solid var(--line);margin-top:10px}
+  .strategy b{color:var(--text)}
+
+  /* strips */
+  .strip{background:var(--panel2);border:1px solid var(--line);border-top:none;margin:0 12px 14px;padding:10px 12px 12px;border-radius:0 0 12px 12px}
+  .strip-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .strip-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .strip-live{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+  .strip-live small{font-size:10px;font-weight:600;color:var(--dim);letter-spacing:.08em}
+  .scen{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .scen .s{background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center}
+  .scen .s .sl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .scen .s .sv{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+  .scen .s.dead{opacity:.35}
+  .tgt{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .tgt label{font-size:13px;color:var(--dim);flex:1}
+  .tgt input{background:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;width:90px;padding:6px 10px;text-align:center}
+  .needs{font-size:14px;font-weight:700;margin-top:8px;text-align:center;min-height:18px}
+  .ok{color:var(--good)} .cau{color:var(--warn)} .halt{color:var(--stop)}
+
+  h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 14px;margin-bottom:12px}
+  .row{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--dim);flex-shrink:0}
+  .row .v{text-align:right;font-variant-numeric:tabular-nums}
+  .note{font-size:13px;color:#c2c9d2;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+  .note b{color:var(--text)}
+
+  .hist-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  table{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}
+  th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+  td{padding:8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td.mk{color:var(--good)} td.ms{color:var(--stop)}
+  td.tot{font-weight:700}
+  .hist-note{font-size:11px;color:var(--dim);margin-top:8px}
+
+  #notes{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;min-height:84px;resize:vertical}
+  .reset{margin-top:18px;width:100%;background:var(--panel);border:1px solid var(--line);color:var(--stop);font:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:11px;cursor:pointer}
+  footer{margin-top:26px;font-size:11px;color:var(--dim);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow"><span>MASS Strength</span><span>Meet day</span></div>
+  <h1>Emily — Bay State Games</h1>
+  <div class="sub">Jul 18, 2026 · Natick · Entry total 130 · Comp PRs: Sn 57 · C&amp;J 70 · Total 127</div>
+</header>
+
+<!-- STICKY: lift toggle · attempts-out counter · clock -->
+<div class="stick">
+  <div class="st-top">
+    <div class="seg">
+      <button id="seg-sn" class="on" onclick="setLift('sn')">SN</button>
+      <button id="seg-cj" onclick="setLift('cj')">CJ</button>
+    </div>
+    <div class="cnt">
+      <button class="cbtn minus" onclick="bump(-1)">&minus;1</button>
+      <input id="cnum" inputmode="numeric" placeholder="&ndash;">
+      <span class="clab">out</span>
+      <button class="cbtn plus" onclick="bump(1)">+1</button>
+    </div>
+    <div class="clk" id="clock" onclick="clockTap(60)">
+      <span class="cl-time" id="cl-time">1:00</span>
+      <button class="c2" onclick="event.stopPropagation();clockTap(120)">2:00</button>
+    </div>
+  </div>
+  <div class="st-take" id="take-line"></div>
+</div>
+
+<div class="hint">Count the cards before Emily, set the counter, tap &minus;1 each time the bar turns over. Tap a warm-up row to check it off. Tap any weight to edit.</div>
+
+<!-- SNATCH -->
+<div class="lift sn" data-lift="sn" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Snatch</span><span class="lift-ref">comp PR 57 · gym PR 60</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <button class="wu-add" onclick="addRow(this)">+ Add set</button>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="55" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="52"><span class="dot">·</span><input class="pl" inputmode="decimal" value="55"><span class="dot">·</span><input class="hi" inputmode="decimal" value="56"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="58" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="55"><span class="dot">·</span><input class="pl" inputmode="decimal" value="58"><span class="dot">·</span><input class="hi" inputmode="decimal" value="59"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="61" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="58"><span class="dot">·</span><input class="pl" inputmode="decimal" value="61"><span class="dot">·</span><input class="hi" inputmode="decimal" value="62"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg" id="sugg-sn"></div>
+  <div class="strategy"><b>Opener is a bad-day weight.</b> After a miss the bar stays, repeat it. Easy make: nudge 1-2 toward the high number. One warm-up every ~3 attempts on the cards, not the clock. Other women jump 2-3 kg, count off the cards. 57 ties her comp PR, 58+ is a comp PR, 61 is gym-PR territory.</div>
+</div>
+
+<div class="strip" id="strip-sn">
+  <div class="strip-head"><span class="strip-title">Best snatch · totals with each C&amp;J</span><span class="strip-live" id="sub-sn">&mdash;</span></div>
+  <div class="scen" id="scen-sn"></div>
+</div>
+
+<div class="note"><b>Between lifts:</b> ~10 min break. Shoes loose, sip, small snack. Rebuild with the bar and the first two C&amp;J warm-ups, no heroics. Shoulder prep circuit if she needs it.</div>
+
+<!-- CLEAN & JERK -->
+<div class="lift cj" data-lift="cj" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Clean &amp; Jerk</span><span class="lift-ref">comp PR 70 · gym PR 75</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <button class="wu-add" onclick="addRow(this)">+ Add set</button>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="74" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="70"><span class="dot">·</span><input class="pl" inputmode="decimal" value="74"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="77" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="74"><span class="dot">·</span><input class="pl" inputmode="decimal" value="77"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="80" onclick="event.stopPropagation()"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="77"><span class="dot">·</span><input class="pl" inputmode="decimal" value="80"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg" id="sugg-cj"></div>
+  <div class="strategy"><b>Never take the opener in the back room.</b> Last warm-up is 67, the opener happens on the platform. Last meet went -68 / -68 / 70: the opener must be automatic. Late C&amp;J warm-ups space wider, ~every 4 attempts. 71+ is a comp PR, 76+ is a gym PR.</div>
+</div>
+
+<div class="strip" id="strip-cj">
+  <div class="strip-head"><span class="strip-title">Total</span><span class="strip-live" id="sub-cj">&mdash;</span></div>
+  <div class="scen" id="scen-cj"></div>
+  <div class="tgt"><label>Target total</label><input id="target" inputmode="decimal" value="131"></div>
+  <div class="needs" id="needs"></div>
+</div>
+
+<h2>Rules on the floor</h2>
+<div class="card">
+  <div class="row"><span class="k">Clock</span><span class="v">1:00 per attempt · following herself 2:00 (&asymp; 2 attempts)</span></div>
+  <div class="row"><span class="k">Declare</span><span class="v">within 30 s of the clock starting</span></div>
+  <div class="row"><span class="k">Changes</span><span class="v">2 per attempt · bar never goes down</span></div>
+  <div class="row"><span class="k">After a make</span><span class="v">bar auto-rises +1 unless you declare</span></div>
+  <div class="row"><span class="k">After a miss</span><span class="v">repeat is the default call</span></div>
+  <div class="row"><span class="k">Openers rule</span><span class="v" id="openers-line">&mdash;</span></div>
+</div>
+
+<h2>Meet history</h2>
+<div class="hist-wrap">
+<table>
+<thead><tr><th>Date</th><th>Meet</th><th>BW</th><th colspan="3">Snatch</th><th colspan="3">C&amp;J</th><th>Total</th></tr></thead>
+<tbody>
+<tr><td>5/24/25</td><td>Puppies</td><td>65.70</td><td class="mk">50</td><td class="mk">55</td><td class="mk">57</td><td class="ms">68</td><td class="ms">68</td><td class="mk">70</td><td class="tot">127</td></tr>
+</tbody>
+</table>
+</div>
+<div class="hist-note">Green = made, red = miss. Snatch went 3 for 3. C&amp;J opened too heavy at 68, missed twice, saved 70 on the third.</div>
+
+<h2>Reference numbers</h2>
+<div class="card">
+  <div class="row"><span class="k">Snatch comp / gym PR</span><span class="v">57 · 60</span></div>
+  <div class="row"><span class="k">C&amp;J comp / gym PR</span><span class="v">70 · 75</span></div>
+  <div class="row"><span class="k">Best total</span><span class="v">127 (Puppies, 5/24/25)</span></div>
+  <div class="row"><span class="k">Entry total</span><span class="v">130</span></div>
+</div>
+
+<h2>Day notes</h2>
+<textarea id="notes" placeholder="Weigh-in, session start, card table quirks, how warm-ups moved..."></textarea>
+
+<button class="reset" onclick="resetDay()">Reset the day</button>
+
+<footer>15 kg bar + collars = 20 · plate math is per side.<br>Edits save on this phone. Works offline after the first load.</footer>
+
+<script>
+/* ===== data & storage ===== */
+const VERSION='v1';
+const DEFAULT_WU={
+  sn:[["24","Flow","bar","3+3"],["21","Tempo","30","3"],["18","Tempo","35","3"],["15","Tempo","40","2"],["12","Snatch","45","2"],["9","Snatch","48","1"],["6","Snatch","50-51","1"],["3","Snatch","52-54","1"]],
+  cj:[["20","Bar","bar","2"],["18","Power","35","2"],["15","C&J","45","2"],["12","C&J","52","2"],["9","C&J","57","2"],["6","C&J","62","2"],["3","C&J","67","2"]]
+};
+let LIFT='sn';
+let CNT={sn:null,cj:null};
+
+function store(k,v){ try{localStorage.setItem('emily_'+k,JSON.stringify(v))}catch(e){} }
+function load(k){ try{const v=localStorage.getItem('emily_'+k);return v?JSON.parse(v):null}catch(e){return null} }
+function wipe(){ try{Object.keys(localStorage).filter(k=>k.indexOf('emily_')===0).forEach(k=>localStorage.removeItem(k))}catch(e){} }
+function f(n){ return (+n).toFixed(1).replace(/\.0$/,''); }
+function plateText(kg){
+  const n=parseFloat(kg);
+  if(isNaN(n)||n<=20) return '';
+  return f((n-20)/2)+' / side';
+}
+
+/* ===== clock (1:00 attempt / 2:00 following herself) ===== */
+let clockInt=null, clockEnd=0, clockDur=60;
+function clockTap(sec){
+  const c=document.getElementById('clock');
+  if(clockInt){ stopClock(); if(sec!==clockDur){/* switching modes stops first */} return; }
+  clockDur=sec||60;
+  clockEnd=Date.now()+clockDur*1000;
+  c.classList.add('run');
+  clockInt=setInterval(tickClock,100);
+  tickClock();
+}
+function stopClock(){
+  clearInterval(clockInt); clockInt=null;
+  const c=document.getElementById('clock');
+  c.classList.remove('run','low','crit');
+  document.getElementById('cl-time').textContent='1:00';
+}
+function tickClock(){
+  const c=document.getElementById('clock');
+  const left=Math.max(0,clockEnd-Date.now());
+  const s=Math.ceil(left/1000);
+  document.getElementById('cl-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  c.classList.toggle('low',s<=30&&s>10);
+  c.classList.toggle('crit',s<=10);
+  if(left<=0){
+    document.getElementById('cl-time').textContent='0:00';
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    clearInterval(clockInt); clockInt=null;
+  }
+}
+
+/* ===== lift toggle & attempts-out counter ===== */
+function setLift(l){
+  LIFT=l; store('lift',l);
+  document.getElementById('seg-sn').classList.toggle('on',l==='sn');
+  document.getElementById('seg-cj').classList.toggle('on',l==='cj');
+  syncCnum(); pace();
+}
+function bump(d){
+  const cur=CNT[LIFT];
+  CNT[LIFT]=Math.max(0,(cur===null?0:cur)+d);
+  store('cnt',CNT); syncCnum(); pace();
+}
+function syncCnum(){
+  document.getElementById('cnum').value = CNT[LIFT]===null?'':CNT[LIFT];
+}
+
+/* pace: highlight the warm-up row that matches the counter */
+function pace(){
+  ['sn','cj'].forEach(key=>{
+    const l=document.querySelector('.lift[data-lift="'+key+'"]');
+    const rows=[...l.querySelectorAll('.wu-row')];
+    rows.forEach(r=>r.classList.remove('due','late'));
+    const cnt=CNT[key];
+    if(cnt===null) return;
+    const next=rows.find(r=>!r.classList.contains('done') && r.querySelector('.aout').value.trim()!=='' && !isNaN(parseInt(r.querySelector('.aout').value)));
+    if(!next) return;
+    const a=parseInt(next.querySelector('.aout').value);
+    if(cnt===a) next.classList.add('due');
+    else if(cnt<a) next.classList.add('late');
+  });
+  renderTake();
+}
+function renderTake(){
+  const el=document.getElementById('take-line');
+  el.classList.remove('due','late');
+  const cnt=CNT[LIFT];
+  const name=LIFT==='sn'?'snatch':'C&J';
+  if(cnt===null){ el.textContent='Count the cards before Emily, then set the counter.'; return; }
+  if(cnt===0){ el.textContent='She’s up.'; return; }
+  const l=document.querySelector('.lift[data-lift="'+LIFT+'"]');
+  const rows=[...l.querySelectorAll('.wu-row')];
+  const next=rows.find(r=>!r.classList.contains('done') && !isNaN(parseInt(r.querySelector('.aout').value)));
+  if(!next){ el.textContent='Warm-ups done · '+cnt+' attempts out.'; return; }
+  const a=parseInt(next.querySelector('.aout').value);
+  const kg=next.querySelector('.wkg').value, reps=next.querySelector('.reps').value;
+  if(cnt>a){ el.textContent='Next: '+kg+' × '+reps+' at '+a+' out.'; }
+  else if(cnt===a){ el.classList.add('due'); el.textContent='TAKE NOW: '+kg+' × '+reps+' ('+name+').'; }
+  else { el.classList.add('late'); el.textContent='BEHIND · take '+kg+' × '+reps+' now.'; }
+}
+
+/* ===== warm-up rows ===== */
+function makeRow(list,aout,set,kg,reps,done){
+  const row=document.createElement('div');
+  row.className='wu-row'+(done?' done':'');
+  row.onclick=()=>{row.classList.toggle('done');saveWU();pace();};
+  [['aout',aout,'numeric'],['set',set,null],['wkg',kg,null],['reps',reps,null]].forEach(([cls,val,mode])=>{
+    const inp=document.createElement('input');
+    inp.className=cls;
+    if(mode) inp.inputMode=mode;
+    inp.value=val;
+    inp.onclick=e=>e.stopPropagation();
+    inp.addEventListener('input',()=>{saveWU();pace();});
+    row.appendChild(inp);
+  });
+  const chk=document.createElement('div');
+  chk.className='chk'; chk.textContent='✓';
+  row.appendChild(chk);
+  list.appendChild(row);
+}
+function addRow(btn){
+  const list=btn.parentNode.querySelector('.wu-list');
+  const last=list.lastElementChild;
+  const kg=last?last.querySelector('.wkg').value:'';
+  makeRow(list,'','Repeat',kg,'1',false);
+  saveWU(); pace();
+}
+function saveWU(){
+  const data={};
+  document.querySelectorAll('.lift[data-lift]').forEach(l=>{
+    data[l.dataset.lift]=[...l.querySelectorAll('.wu-row')].map(r=>[
+      r.querySelector('.aout').value, r.querySelector('.set').value,
+      r.querySelector('.wkg').value, r.querySelector('.reps').value,
+      r.classList.contains('done')
+    ]);
+  });
+  store('wu',data);
+}
+function initWU(){
+  const saved=load('wu');
+  document.querySelectorAll('.lift[data-lift]').forEach(l=>{
+    const key=l.dataset.lift, list=l.querySelector('.wu-list');
+    const rows=(saved&&saved[key]&&saved[key].length)?saved[key]:DEFAULT_WU[key].map(r=>[r[0],r[1],r[2],r[3],false]);
+    rows.forEach(r=>makeRow(list,r[0],r[1],r[2],r[3],r[4]));
+  });
+}
+
+/* ===== attempts ===== */
+function liftState(key){
+  const l=document.querySelector('.lift[data-lift="'+key+'"]');
+  return [...l.querySelectorAll('.att')].map(a=>({
+    kg:parseFloat(a.querySelector('.kg').value)||0,
+    pl:parseFloat(a.querySelector('.pl').value)||0,
+    hi:parseFloat(a.querySelector('.hi').value)||0,
+    st:a.classList.contains('good')?'g':a.classList.contains('miss')?'m':''
+  }));
+}
+function bestGood(atts){ return Math.max(0,...atts.filter(a=>a.st==='g').map(a=>a.kg)); }
+function anyMarked(atts){ return atts.some(a=>a.st!==''); }
+function liveOrPlanned(atts){
+  if(anyMarked(atts)) return {val:bestGood(atts), live:true};
+  return {val:atts[1]?atts[1].kg:0, live:false};
+}
+function step(btn,d){
+  const att=btn.closest('.att');
+  const inp=att.querySelector('.kg');
+  let v=parseFloat(inp.value);
+  if(isNaN(v)) v=parseFloat(att.querySelector('.pl').value)||0;
+  v+=d;
+  // floor: the bar never goes below the previous attempt (+1 after a make)
+  const atts=[...att.closest('.attempts').querySelectorAll('.att')];
+  const i=atts.indexOf(att);
+  if(i>0){
+    const prev=atts[i-1];
+    const pkg=parseFloat(prev.querySelector('.kg').value);
+    if(!isNaN(pkg)){
+      const min=prev.classList.contains('good')?pkg+1:pkg;
+      if(v<min) v=min;
+    }
+  }
+  if(v<0) v=0;
+  inp.value=f(v);
+  refreshPlates(); saveAtts(); renderForecast(); suggAll();
+}
+function cycle(el){
+  const att=el.parentNode;
+  if(att.classList.contains('good')){att.classList.remove('good');att.classList.add('miss');el.textContent='✗ MISS';}
+  else if(att.classList.contains('miss')){att.classList.remove('miss');el.textContent='SET';}
+  else{att.classList.add('good');el.textContent='✓ GOOD';}
+  saveAtts(); renderForecast(); suggAll();
+}
+function sugg(key){
+  const el=document.getElementById('sugg-'+key);
+  const atts=liftState(key);
+  let msg='';
+  for(let i=0;i<3;i++){
+    if(atts[i].st==='m' && (i===2 || atts[i+1].st==='')){
+      msg = i===2 ? '' : 'After the miss: repeat '+f(atts[i].kg)+'.';
+      break;
+    }
+    if(atts[i].st==='g' && i<2 && atts[i+1].st===''){
+      msg='Made it. Next: plan '+f(atts[i+1].pl)+(atts[i+1].hi?' · easy make: push toward '+f(atts[i+1].hi):'')+'.';
+      break;
+    }
+  }
+  el.textContent=msg;
+  el.classList.toggle('show',msg!=='');
+}
+function suggAll(){ sugg('sn'); sugg('cj'); }
+function saveAtts(){
+  const data={};
+  document.querySelectorAll('.lift[data-lift]').forEach(l=>{
+    data[l.dataset.lift]=[...l.querySelectorAll('.att')].map(a=>({
+      kg:a.querySelector('.kg').value, lo:a.querySelector('.lo').value,
+      pl:a.querySelector('.pl').value, hi:a.querySelector('.hi').value,
+      st:a.classList.contains('good')?'g':a.classList.contains('miss')?'m':''
+    }));
+  });
+  store('atts',data);
+}
+function restoreAtts(){
+  const data=load('atts'); if(!data) return;
+  document.querySelectorAll('.lift[data-lift]').forEach(l=>{
+    const arr=data[l.dataset.lift]; if(!arr) return;
+    l.querySelectorAll('.att').forEach((a,i)=>{
+      if(!arr[i])return;
+      a.querySelector('.kg').value=arr[i].kg;
+      a.querySelector('.lo').value=arr[i].lo;
+      a.querySelector('.pl').value=arr[i].pl;
+      a.querySelector('.hi').value=arr[i].hi;
+      const m=a.querySelector('.mark');
+      a.classList.remove('good','miss');
+      if(arr[i].st==='g'){a.classList.add('good');m.textContent='✓ GOOD';}
+      else if(arr[i].st==='m'){a.classList.add('miss');m.textContent='✗ MISS';}
+      else m.textContent='SET';
+    });
+  });
+}
+function refreshPlates(){
+  document.querySelectorAll('.att').forEach(a=>{
+    a.querySelector('.plates').textContent=plateText(a.querySelector('.kg').value);
+  });
+}
+
+/* ===== forecast, target, openers rule ===== */
+function renderForecast(){
+  const sn=liftState('sn'), cj=liftState('cj');
+  const labs=['1st','2nd','3rd'];
+  const snRes=liveOrPlanned(sn);
+  document.getElementById('sub-sn').innerHTML = f(snRes.val)+' <small>'+(snRes.live?'LIVE':'PROJ (2nd)')+'</small>';
+  document.getElementById('scen-sn').innerHTML = cj.map((a,i)=>
+    '<div class="s'+(a.st==='m'?' dead':'')+'"><div class="sl">+CJ '+labs[i]+'</div><div class="sv">'+f(snRes.val+a.kg)+'</div></div>').join('');
+  const cjRes=liveOrPlanned(cj);
+  const tot=snRes.val+cjRes.val;
+  const live=snRes.live&&cjRes.live;
+  document.getElementById('sub-cj').innerHTML = f(tot)+' <small>'+(live?'LIVE':'PROJ')+'</small>';
+  const vsPR=tot-127, vsEntry=tot-130;
+  document.getElementById('scen-cj').innerHTML =
+    '<div class="s"><div class="sl">vs PR 127</div><div class="sv '+(vsPR>=0?'ok':'halt')+'">'+(vsPR>=0?'+':'')+f(vsPR)+'</div></div>'+
+    '<div class="s"><div class="sl">vs entry 130</div><div class="sv '+(vsEntry>=0?'ok':'cau')+'">'+(vsEntry>=0?'+':'')+f(vsEntry)+'</div></div>'+
+    '<div class="s"><div class="sl">best sn + cj</div><div class="sv">'+f(snRes.val)+' + '+f(cjRes.val)+'</div></div>';
+  // needs line
+  const tgt=parseFloat(document.getElementById('target').value);
+  const nEl=document.getElementById('needs');
+  if(!isNaN(tgt)&&tgt>0){
+    const cjBest=bestGood(cj);
+    if(cjBest>0 && snRes.val+cjBest>=tgt){ nEl.textContent='Target '+f(tgt)+' done: '+f(snRes.val+cjBest)+'.'; nEl.className='needs ok'; }
+    else{
+      const need=tgt-snRes.val;
+      const hi3=cj[2].hi||cj[2].pl||cj[2].kg;
+      nEl.textContent='Needs C&J ≥ '+f(need)+' for '+f(tgt)+'.';
+      nEl.className='needs '+(need<=hi3?'ok':need<=77?'cau':'halt');
+    }
+  } else { nEl.textContent=''; nEl.className='needs'; }
+  // openers rule (entry 130, openers must total at least entry - 20 = 110)
+  const sum=sn[0].kg+cj[0].kg;
+  const oEl=document.getElementById('openers-line');
+  oEl.textContent='openers '+f(sn[0].kg)+' + '+f(cj[0].kg)+' = '+f(sum)+' · need ≥ 110';
+  oEl.className='v '+(sum>=110?'ok':'halt');
+}
+
+/* ===== notes, target, reset ===== */
+function resetDay(){
+  if(!confirm('Reset the day? Clears checkmarks, marks, counter, and notes. The plan stays.')) return;
+  wipe(); location.reload();
+}
+
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.classList.contains('kg')){refreshPlates();saveAtts();renderForecast();suggAll();}
+  if(t.classList.contains('lo')||t.classList.contains('pl')||t.classList.contains('hi')){saveAtts();renderForecast();suggAll();}
+  if(t.id==='cnum'){const v=parseInt(t.value);CNT[LIFT]=isNaN(v)?null:Math.max(0,v);store('cnt',CNT);pace();}
+  if(t.id==='target'){store('target',t.value);renderForecast();}
+  if(t.id==='notes'){store('notes',t.value);}
+});
+
+/* ===== init ===== */
+if(load('v')!==VERSION){ wipe(); store('v',VERSION); }
+initWU();
+restoreAtts();
+CNT=load('cnt')||{sn:null,cj:null};
+const sl=load('lift'); if(sl==='cj') setLift('cj');
+const st=load('target'); if(st!==null&&st!==undefined) document.getElementById('target').value=st;
+const snotes=load('notes'); if(snotes) document.getElementById('notes').value=snotes;
+syncCnum();
+refreshPlates();
+renderForecast();
+suggAll();
+pace();
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+</script>
+</body>
+</html>
