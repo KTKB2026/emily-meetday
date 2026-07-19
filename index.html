@@ -38,6 +38,8 @@
   .cbtn.plus{font-size:12px;padding:5px 8px;color:var(--dim)}
   #cnum{width:58px;font-size:24px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;background:var(--panel2);border:1px dashed var(--dim);border-radius:9px;padding:5px 0}
   #cnum.set{border:1px solid var(--line)}
+  .cnumwrap{position:relative;display:flex}
+  .info{position:absolute;top:-9px;right:-9px;z-index:5;width:18px;height:18px;border-radius:50%;background:var(--ink);border:1px solid var(--dim);color:var(--dim);font:inherit;font-size:11px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
   .clab{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);line-height:1.2}
   .clk{display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 4px;border-radius:9px;border:1px solid transparent;flex-shrink:0;margin-left:auto;text-align:right}
   .clk .cl-time{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
@@ -45,7 +47,8 @@
   .clk .cl-sub{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);line-height:1.2}
   .clk .cl-sub.slow{color:var(--warn);font-weight:700}
   .crst{background:var(--panel2);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:11px;font-weight:700;border-radius:7px;padding:4px 7px;cursor:pointer}
-  .st-take{font-size:13px;font-weight:600;text-align:center;margin-top:7px;padding:6px 8px;border-radius:8px;background:var(--panel2);color:var(--dim)}
+  .st-take{display:none;font-size:13px;font-weight:600;text-align:center;margin-top:7px;padding:6px 8px;border-radius:8px;background:var(--panel2);color:var(--dim)}
+  .st-take.show{display:block}
   .st-take.due{background:rgba(224,163,60,.16);color:var(--warn)}
   .st-take.late{background:rgba(224,99,90,.16);color:var(--stop)}
   .st-take .tl-lift{font-weight:800}
@@ -169,7 +172,7 @@
   <div class="st-top">
     <div class="cnt">
       <button class="cbtn minus" onclick="bump(-1)">&minus;1</button>
-      <input id="cnum" inputmode="numeric" placeholder="#">
+      <span class="cnumwrap"><input id="cnum" inputmode="numeric" placeholder="#"><button class="info" onclick="toggleHint()">i</button></span>
       <span class="clab">out</span>
       <button class="cbtn plus" onclick="bump(1)">+1</button>
     </div>
@@ -186,7 +189,6 @@
 
 <!-- SNATCH TAB -->
 <div class="tab on" id="tab-sn">
-<div class="hint">Tap the # and type how many attempts are out, or step it with +1. Tap &minus;1 each time the bar turns over. Tap a row to check it off.</div>
 <div class="lift sn" data-lift="sn" style="margin-bottom:0;border-radius:14px 14px 0 0">
   <div class="lift-head"><span class="lift-name">Snatch</span><span class="lift-ref">comp PR 57 · gym PR 60</span></div>
   <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
@@ -209,7 +211,6 @@
 
 <!-- C&J TAB -->
 <div class="tab" id="tab-cj">
-<div class="hint">Counter and clock up top follow this lift now. Same flow as snatch.</div>
 <div class="lift cj" data-lift="cj" style="margin-bottom:0;border-radius:14px 14px 0 0">
   <div class="lift-head"><span class="lift-name">Clean &amp; Jerk</span><span class="lift-ref">comp PR 70 · gym PR 75</span></div>
   <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
@@ -300,6 +301,7 @@ const DEFAULT_WU={
 let LIFT='sn';
 let CNT={sn:null,cj:null};
 let LASTSET={sn:null,cj:null};
+let HINT=false;
 
 function store(k,v){ try{localStorage.setItem('emily_'+k,JSON.stringify(v))}catch(e){} }
 function load(k){ try{const v=localStorage.getItem('emily_'+k);return v?JSON.parse(v):null}catch(e){return null} }
@@ -367,6 +369,7 @@ function tickClock(){
 function bump(d){
   const cur=CNT[LIFT];
   CNT[LIFT]=Math.max(0,(cur===null?0:cur)+d);
+  HINT=false;
   store('cnt',CNT); syncCnum(); pace();
 }
 function syncCnum(){
@@ -391,12 +394,19 @@ function pace(){
   });
   renderTake();
 }
+function toggleHint(){ HINT=!HINT; renderTake(); }
 function renderTake(){
   const el=document.getElementById('take-line');
   el.classList.remove('due','late');
+  if(HINT){
+    el.classList.add('show');
+    el.innerHTML='Count the attempt cards before Emily, tap the # and type the number. Tap &minus;1 each time the bar turns over. Warm-up rows: tap to check off, Edit to delete, + Add set to repeat. Tap any weight to edit it.';
+    return;
+  }
   const cnt=CNT[LIFT];
   const tag='<span class="tl-lift '+LIFT+'">'+(LIFT==='sn'?'SN':'CJ')+'</span> · ';
-  if(cnt===null){ el.innerHTML=tag+'Tap the # and type how many attempts are out.'; return; }
+  if(cnt===null){ el.classList.remove('show'); el.innerHTML=''; return; }
+  el.classList.add('show');
   if(cnt===0){ el.innerHTML=tag+'She’s up.'; return; }
   const l=document.querySelector('.lift[data-lift="'+LIFT+'"]');
   const rows=[...l.querySelectorAll('.wu-row')];
@@ -617,7 +627,7 @@ document.addEventListener('input',e=>{
   const t=e.target;
   if(t.classList.contains('kg')){refreshPlates();saveAtts();renderForecast();suggAll();}
   if(t.classList.contains('lo')||t.classList.contains('pl')||t.classList.contains('hi')){saveAtts();renderForecast();suggAll();}
-  if(t.id==='cnum'){const v=parseInt(t.value);CNT[LIFT]=isNaN(v)?null:Math.max(0,v);store('cnt',CNT);t.classList.toggle('set',CNT[LIFT]!==null);pace();}
+  if(t.id==='cnum'){const v=parseInt(t.value);CNT[LIFT]=isNaN(v)?null:Math.max(0,v);HINT=false;store('cnt',CNT);t.classList.toggle('set',CNT[LIFT]!==null);pace();}
   if(t.id==='target'){store('target',t.value);renderForecast();}
   if(t.id==='notes'){store('notes',t.value);}
 });
