@@ -17,26 +17,32 @@
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{background:var(--ink);color:var(--text);font-family:-apple-system,"SF Pro Text",Inter,system-ui,sans-serif;font-size:16px;line-height:1.45;padding:12px 14px 92px;max-width:560px;margin:0 auto}
   header{margin-bottom:10px}
-  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:6px}
-  .athseg{display:flex;gap:8px;margin-bottom:10px}
-  .athseg button{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:14px;font-weight:800;padding:10px;border-radius:10px;cursor:pointer}
-  .athseg button.on{background:var(--panel2);color:var(--text)}
-  .athseg button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:1px;background:var(--dim)}
-  .athseg button[data-ath="em"] .dot{background:var(--em)}
-  .athseg button[data-ath="dn"] .dot{background:var(--dn)}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .athchips{display:flex;gap:6px}
+  .athchips button{width:34px;height:34px;border-radius:9px;background:var(--panel);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+  .athchips button.on{background:var(--panel2);color:var(--text)}
+  .athchips button[data-ath="em"].on{color:var(--em);border-color:var(--em)}
+  .athchips button[data-ath="dn"].on{color:var(--dn);border-color:var(--dn)}
   h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
   .sub{color:var(--dim);font-size:12px;margin-top:4px}
 
   input,textarea{font-family:inherit;color:var(--text);background:transparent;border:none;outline:none}
   input:focus{background:rgba(255,255,255,.07);border-radius:4px}
 
-  /* day schedule strip */
-  .sched{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 12px;margin-bottom:10px}
-  .srow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
-  .srow:last-child{border-bottom:none}
-  .srow .sname{font-size:12px;font-weight:800;width:58px;flex-shrink:0;cursor:pointer}
+  /* day schedule strip (collapsible) */
+  .sched{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 12px;margin-bottom:10px}
+  .sched-head{display:flex;align-items:center;gap:8px;padding:9px 0;cursor:pointer;user-select:none}
+  .sched-head .st{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:700;flex-shrink:0}
+  .sched-sum{flex:1;min-width:0;font-size:11px;color:var(--dim);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+  .chev{color:var(--dim);font-size:12px;flex-shrink:0;transition:transform .15s}
+  .sched.open .chev{transform:rotate(90deg)}
+  .sched-body{display:none;padding-bottom:4px}
+  .sched.open .sched-body{display:block}
+  .srow{display:flex;align-items:center;gap:6px;padding:7px 0;border-top:1px solid var(--line)}
+  .srow .sname{font-size:12px;font-weight:800;width:52px;flex-shrink:0;cursor:pointer}
   .srow[data-ath="em"] .sname{color:var(--em)} .srow[data-ath="dn"] .sname{color:var(--dn)}
-  .srow input{flex:1;min-width:0;background:var(--panel2);border-radius:6px;font-size:12px;padding:6px 7px;text-align:center}
+  .srow input{flex:1;min-width:0;background:var(--panel2);border-radius:6px;font-size:12px;padding:6px 5px;text-align:center}
+  .srow input.sbw{flex:0 0 58px}
 
   /* STICKY BAR */
   .stick{
@@ -187,19 +193,23 @@
 <body>
 
 <header>
-  <div class="eyebrow"><span>MASS Strength</span><span>Meet day</span></div>
-  <div class="athseg">
-    <button data-ath="em" class="on" onclick="setAth('em')"><span class="dot"></span>Emily</button>
-    <button data-ath="dn" onclick="setAth('dn')"><span class="dot"></span>Dennis</button>
+  <div class="eyebrow"><span>MASS Strength · Meet day</span>
+    <div class="athchips">
+      <button data-ath="em" class="on" onclick="setAth('em')">E</button>
+      <button data-ath="dn" onclick="setAth('dn')">D</button>
+    </div>
   </div>
   <h1 id="hd-name"></h1>
   <div class="sub" id="hd-sub"></div>
 </header>
 
-<!-- DAY SCHEDULE -->
-<div class="sched">
-  <div class="srow" data-ath="em"><span class="sname" onclick="setAth('em')">Emily</span><input class="swin" placeholder="weigh-in"><input class="ssess" placeholder="session"><input class="splat" placeholder="platform"></div>
-  <div class="srow" data-ath="dn"><span class="sname" onclick="setAth('dn')">Dennis</span><input class="swin" placeholder="weigh-in"><input class="ssess" placeholder="session"><input class="splat" placeholder="platform"></div>
+<!-- DAY SCHEDULE (collapsible) -->
+<div class="sched" id="sched">
+  <div class="sched-head" onclick="toggleSched()"><span class="st">Day schedule</span><span class="sched-sum" id="sched-sum"></span><span class="chev">&#9656;</span></div>
+  <div class="sched-body">
+    <div class="srow" data-ath="em"><span class="sname" onclick="setAth('em')">Emily</span><input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>
+    <div class="srow" data-ath="dn"><span class="sname" onclick="setAth('dn')">Dennis</span><input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>
+  </div>
 </div>
 
 <!-- STICKY: attempts-out counter · session clock -->
@@ -479,8 +489,26 @@ function today(){ const d=new Date(); return (d.getMonth()+1)+'/'+d.getDate()+'/
 function setAth(a){
   ATH=a; store('ath',a);
   document.querySelectorAll('.ath').forEach(el=>el.classList.toggle('on',el.dataset.ath===a));
-  document.querySelectorAll('.athseg button').forEach(b=>b.classList.toggle('on',b.dataset.ath===a));
-  renderHead(); syncCnum(); pace(); tickClock();
+  document.querySelectorAll('.athchips button').forEach(b=>b.classList.toggle('on',b.dataset.ath===a));
+  renderHead(); renderSchedSum(); syncCnum(); pace(); tickClock();
+}
+function toggleSched(){
+  const open=document.getElementById('sched').classList.toggle('open');
+  store('schedopen',open);
+}
+function schedVals(a){
+  const r=document.querySelector('.srow[data-ath="'+a+'"]');
+  return {win:r.querySelector('.swin').value, bw:r.querySelector('.sbw').value,
+          sess:r.querySelector('.ssess').value, plat:r.querySelector('.splat').value};
+}
+function renderSchedSum(){
+  const s=schedVals(ATH), m=ATHS[ATH];
+  const bits=[];
+  if(s.win) bits.push('w-in '+s.win);
+  if(s.bw) bits.push('BW '+s.bw);
+  if(s.sess) bits.push(s.sess);
+  if(s.plat) bits.push('plat '+s.plat);
+  document.getElementById('sched-sum').textContent = m.name.charAt(0)+' · '+(bits.length?bits.join(' · '):'tap to fill');
 }
 function setTab(t){
   document.querySelectorAll('.ath .tab').forEach(p=>p.classList.toggle('on',p.dataset.tab===t));
@@ -799,7 +827,7 @@ function saveMeet(){
   const sn=liftState('sn',a), cj=liftState('cj',a);
   if(!anyMarked(sn)&&!anyMarked(cj)){ alert('Nothing marked yet. Mark attempts good or miss first.'); return; }
   const bs=bestGood(sn), bc=bestGood(cj);
-  const rec={date:today(), meet:m.meet, sn:sn.map(x=>({kg:x.kg,st:x.st})), cj:cj.map(x=>({kg:x.kg,st:x.st})), total:(bs&&bc)?bs+bc:0};
+  const rec={date:today(), meet:m.meet, bw:schedVals(a).bw||'', sn:sn.map(x=>({kg:x.kg,st:x.st})), cj:cj.map(x=>({kg:x.kg,st:x.st})), total:(bs&&bc)?bs+bc:0};
   const meets=load(a+'_meets')||[];
   meets.unshift(rec);
   store(a+'_meets',meets);
@@ -810,15 +838,14 @@ function renderMeets(a){
   const body=aEl(a).querySelector('tbody.meets');
   const meets=load(a+'_meets')||[];
   body.innerHTML=meets.map(r=>
-    '<tr><td>'+r.date+'</td><td>'+r.meet+'</td><td>—</td>'+r.sn.map(markTd).join('')+r.cj.map(markTd).join('')+
+    '<tr><td>'+r.date+'</td><td>'+r.meet+'</td><td>'+(r.bw||'—')+'</td>'+r.sn.map(markTd).join('')+r.cj.map(markTd).join('')+
     '<td class="tot">'+(r.total?f(r.total):'—')+'</td></tr>').join('');
 }
 function exportDay(btn){
   const a=ATH, m=ATHS[a], c=aEl(a);
-  const sched=document.querySelector('.srow[data-ath="'+a+'"]');
+  const sv=schedVals(a);
   const lines=[m.name+' · '+m.meet+' · '+today()];
-  const w=sched.querySelector('.swin').value, s=sched.querySelector('.ssess').value, p=sched.querySelector('.splat').value;
-  if(w||s||p) lines.push(['weigh-in '+(w||'—'),'session '+(s||'—'),'platform '+(p||'—')].join(' · '));
+  if(sv.win||sv.bw||sv.sess||sv.plat) lines.push(['weigh-in '+(sv.win||'—'),'BW '+(sv.bw||'—'),'session '+(sv.sess||'—'),'platform '+(sv.plat||'—')].join(' · '));
   ['sn','cj'].forEach(key=>{
     const name=key==='sn'?'SNATCH':'C&J';
     const rows=[...c.querySelectorAll('.lift[data-lift="'+key+'"] .wu-row')].map(r=>{
@@ -874,10 +901,11 @@ document.addEventListener('input',e=>{
     }
   }
   if(t.id==='cnum'){const v=parseInt(t.value);CNT[ATH][LIFTS[ATH]]=isNaN(v)?null:Math.max(0,v);HINT=false;store('cnt',CNT);t.classList.toggle('set',CNT[ATH][LIFTS[ATH]]!==null);pace();}
-  if(t.classList.contains('swin')||t.classList.contains('ssess')||t.classList.contains('splat')){
+  if(t.classList.contains('swin')||t.classList.contains('sbw')||t.classList.contains('ssess')||t.classList.contains('splat')){
     const data={};
-    document.querySelectorAll('.srow').forEach(r=>{data[r.dataset.ath]=[r.querySelector('.swin').value,r.querySelector('.ssess').value,r.querySelector('.splat').value];});
+    document.querySelectorAll('.srow').forEach(r=>{data[r.dataset.ath]=[r.querySelector('.swin').value,r.querySelector('.sbw').value,r.querySelector('.ssess').value,r.querySelector('.splat').value];});
     store('sched',data);
+    renderSchedSum();
   }
 });
 // attempt kg taps should not bubble anywhere odd
@@ -901,7 +929,11 @@ LIFTS=load('lifts')||LIFTS;
   renderForecast(a);
   suggAll(a);
 });
-const sched=load('sched'); if(sched) document.querySelectorAll('.srow').forEach(r=>{ const s=sched[r.dataset.ath]; if(s){r.querySelector('.swin').value=s[0];r.querySelector('.ssess').value=s[1];r.querySelector('.splat').value=s[2];} });
+const sched=load('sched'); if(sched) document.querySelectorAll('.srow').forEach(r=>{ const s=sched[r.dataset.ath]; if(!s) return;
+  if(s.length===3){ r.querySelector('.swin').value=s[0];r.querySelector('.ssess').value=s[1];r.querySelector('.splat').value=s[2]; }
+  else { r.querySelector('.swin').value=s[0]||'';r.querySelector('.sbw').value=s[1]||'';r.querySelector('.ssess').value=s[2]||'';r.querySelector('.splat').value=s[3]||''; }
+});
+if(load('schedopen')!==false) document.getElementById('sched').classList.add('open');
 const sath=load('ath'); if(sath&&ATHS[sath]) ATH=sath;
 setAth(ATH);
 const stab=load('tab'); setTab(stab||'sn');
