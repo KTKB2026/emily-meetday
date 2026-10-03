@@ -39,6 +39,12 @@
   .srow .sname{font-size:12px;font-weight:800;width:52px;flex-shrink:0;cursor:pointer;color:var(--ac);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .srow input{flex:1;min-width:0;background:var(--panel2);border-radius:6px;font-size:12px;padding:6px 5px;text-align:center}
   .srow input.sbw{flex:0 0 58px}
+  .shead{display:flex;gap:6px;padding:2px 0 5px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .shead span{flex:1;min-width:0;text-align:center}
+  .shead span.sn0{flex:0 0 52px;text-align:left}
+  .shead span.sb{flex:0 0 58px}
+  .srow input.splat.red{color:#ef6f66;font-weight:700}
+  .srow input.splat.blue{color:#7d8dff;font-weight:700}
 
   /* STICKY BAR */
   .stick{
@@ -199,7 +205,7 @@
 
 <!-- DAY SCHEDULE (collapsible) -->
 <div class="sched" id="sched">
-  <div class="sched-head" onclick="toggleSched()"><span class="st">Day schedule</span><span class="sched-sum" id="sched-sum"></span><span class="chev">&#9656;</span></div>
+  <div class="sched-head" onclick="toggleSched()"><span class="st">Sat 10/3 · Day 1</span><span class="sched-sum" id="sched-sum"></span><span class="chev">&#9656;</span></div>
   <div class="sched-body" id="sched-rows"></div>
 </div>
 
@@ -242,7 +248,7 @@
    Bumping planv makes phones swap in the new warm-ups and attempts once
    (saved meets, notes, and records are kept).
    ===================================================================== */
-const MEET={id:'newso26', name:'NE WSO Championships', when:'Oct 3-4, 2026'};
+const MEET={id:'newso26', name:'NE WSO Championships', when:'Oct 3-4, 2026', schedv:'1'};
 
 const BLANK_WU={
   sn:[["24","Warm-up","",""],["21","Warm-up","",""],["18","Snatch","",""],["15","Snatch","",""],["12","Snatch","",""],["9","Snatch","",""],["6","Snatch","",""],["3","Snatch","",""]],
@@ -254,17 +260,21 @@ const STRAT_CJ='<b>Never take the opener in the back room.</b> Last warm-up arou
 const BLANK_SUB='numbers go in on the tabs, everything is editable';
 
 const ATHLETES=[
-  {id:'jacklyn', name:'Jacklyn', color:'#ec8fbf', bar:15, jumps:'women jump 2-3 kg', planv:'2',
-   sub:'Entry 145 · Comp PRs: Sn 66 · C&J 80 · Total 145', snRef:'comp PR 66 · gym PR 67', cjRef:'comp PR 80 · gym PR 81',
-   prTotal:145, cjCap:81, entry:'145', target:'148',
-   wu:{sn:[["24","Tall + Drop","bar","3+3"],["21","Snatch","35","3"],["18","Snatch","45","3"],["15","Snatch","50","2"],["12","Snatch","53","1-2"],["9","Snatch","55","1"],["6","Snatch","58","1"],["3","Opener","61","1"]],
-       cj:[["21","Mid pause","bar","2"],["18","Power 1st","35","2"],["15","C&J","45","2"],["12","C&J","55","2"],["9","C&J","65","1"],["6","C&J","70","1"],["3","Opener","74","1"]]},
-   att:{sn:[["60","62","64"],["63","65","67"],["66","68","70"]], cj:[["70","72","74"],["74","76","78"],["78","80","82"]]},
-   strat:{sn:STRAT_SN+' Last meet went 62 / 65 / -68. 66 ties her comp PR, 67 ties gym, the planned 68 third is a PR.',
-          cj:'<b>Never take the opener in the back room.</b> Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 72 / -77 / 80. 80 ties her comp PR, 81 ties gym, 82 is new.'},
-   history:[{date:'—',meet:'Last comp',bw:'',sn:[{kg:62,st:'g'},{kg:65,st:'g'},{kg:68,st:'m'}],cj:[{kg:72,st:'g'},{kg:77,st:'m'},{kg:80,st:'g'}],total:145}],
-   refs:['66 · 67','80 · 81','145']},
-  {id:'amy', name:'Amy', color:'#b287e8', bar:15, jumps:'women jump 2-3 kg', planv:'2',
+  {id:'kristin', name:'Kristin', color:'#b9d35f', bar:15, jumps:'women jump 2-3 kg', planv:'2', sched:['8:00 AM','10:00 AM','Red'],
+   sub:'Entry 130 · Comp PRs: Sn 62 · C&J 69 · Total 131', snRef:'comp PR 62 · gym PR 63', cjRef:'comp PR 69 · gym PR 70',
+   prTotal:131, cjCap:70, entry:'130', target:'133',
+   wu:{sn:[["18","Bar","bar",""],["15","Snatch","35","2"],["13","Snatch","40","2"],["11","Snatch","45","1"],["9","Snatch","50","1"],["7","Snatch","53","1"],["5","Snatch","55-56","1"],["3","Snatch","57-58","1"],["Open","Opener","57-59","1"]],
+       cj:[["15","Power 1st","35","2"],["13","Power C&J","45","2"],["11","Power C&J","50","1"],["9","Power C&J","55","1"],["7","C&J","58-59","1"],["5","C&J","61-62","1"],["3","C&J","63-65","1"]]},
+   att:{sn:[["55","57","59"],["57","59","61"],["60","61","63"]], cj:[["63","65","67"],["66","68","69"],["69","70","71"]]},
+   strat:{sn:STRAT_SN+' Last meet went 58 / 60 / 62, 3 for 3. 62 ties her comp PR, 63 ties gym.',
+          cj:'<b>Never take the opener in the back room.</b> Last warm-up is 63-65. Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 62 / 66 / 69, 3 for 3. 69 ties her comp PR, 70 ties gym, 71 is new.'},
+   history:[{date:'—',meet:'Last comp',bw:'',sn:[{kg:58,st:'g'},{kg:60,st:'g'},{kg:62,st:'g'}],cj:[{kg:62,st:'g'},{kg:66,st:'g'},{kg:69,st:'g'}],total:131}],
+   refs:['62 · 63','69 · 70','131']},
+  {id:'chris', name:'Chris', color:'#53c2b8', bar:20, jumps:'men jump 3-5 kg', planv:'1', sched:['10:00 AM','12:00 PM','Blue'],
+   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
+   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
+   history:[], refs:['','','']},
+  {id:'amy', name:'Amy', color:'#b287e8', bar:15, jumps:'women jump 2-3 kg', planv:'2', sched:['12:00 PM','2:00 PM','Red'],
    sub:'Entry not set · Comp PRs: Sn 66 · C&J 87 · Total 152', snRef:'comp PR 66 · 8 wk top 66', cjRef:'comp PR 87 · 8 wk top 85',
    prTotal:152, cjCap:87, entry:'', target:'150',
    wu:{sn:[["24","Tall Sn + Drop","bar","2"],["23","Snatch","35","2"],["21","Snatch","40","2"],["18","Snatch","45","1-2"],["15","Snatch","50","1"],["12","Snatch","53","1"],["9","Snatch","56","1"],["6","Snatch","59","1"],["3","Pull or snatch","62","1"]],
@@ -274,20 +284,16 @@ const ATHLETES=[
           cj:'<b>Never take the opener in the back room.</b> Last warm-up is 74-75. Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 80 / 85 / -88. 85 is her 8 week top, 87 ties her comp PR.'},
    history:[{date:'—',meet:'Last comp',bw:'',sn:[{kg:62,st:'g'},{kg:65,st:'g'},{kg:68,st:'m'}],cj:[{kg:80,st:'g'},{kg:85,st:'g'},{kg:88,st:'m'}],total:150}],
    refs:['66 · 66','87 · 85','152']},
-  {id:'chris', name:'Chris', color:'#53c2b8', bar:20, jumps:'men jump 3-5 kg', planv:'1',
-   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
-   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
-   history:[], refs:['','','']},
-  {id:'kristin', name:'Kristin', color:'#b9d35f', bar:15, jumps:'women jump 2-3 kg', planv:'2',
-   sub:'Entry 130 · Comp PRs: Sn 62 · C&J 69 · Total 131', snRef:'comp PR 62 · gym PR 63', cjRef:'comp PR 69 · gym PR 70',
-   prTotal:131, cjCap:70, entry:'130', target:'133',
-   wu:{sn:[["18","Bar","bar",""],["15","Snatch","35","2"],["13","Snatch","40","2"],["11","Snatch","45","1"],["9","Snatch","50","1"],["7","Snatch","53","1"],["5","Snatch","55-56","1"],["3","Snatch","57-58","1"],["Open","Opener","57-59","1"]],
-       cj:[["15","Power 1st","35","2"],["13","Power C&J","45","2"],["11","Power C&J","50","1"],["9","Power C&J","55","1"],["7","C&J","58-59","1"],["5","C&J","61-62","1"],["3","C&J","63-65","1"]]},
-   att:{sn:[["55","57","59"],["57","59","61"],["60","61","63"]], cj:[["63","65","67"],["66","68","69"],["69","70","71"]]},
-   strat:{sn:STRAT_SN+' Last meet went 58 / 60 / 62, 3 for 3. 62 ties her comp PR, 63 ties gym.',
-          cj:'<b>Never take the opener in the back room.</b> Last warm-up is 63-65. Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 62 / 66 / 69, 3 for 3. 69 ties her comp PR, 70 ties gym, 71 is new.'},
-   history:[{date:'—',meet:'Last comp',bw:'',sn:[{kg:58,st:'g'},{kg:60,st:'g'},{kg:62,st:'g'}],cj:[{kg:62,st:'g'},{kg:66,st:'g'},{kg:69,st:'g'}],total:131}],
-   refs:['62 · 63','69 · 70','131']}
+  {id:'jacklyn', name:'Jacklyn', color:'#ec8fbf', bar:15, jumps:'women jump 2-3 kg', planv:'2', sched:['4:00 PM','6:00 PM','Blue'],
+   sub:'Entry 145 · Comp PRs: Sn 66 · C&J 80 · Total 145', snRef:'comp PR 66 · gym PR 67', cjRef:'comp PR 80 · gym PR 81',
+   prTotal:145, cjCap:81, entry:'145', target:'148',
+   wu:{sn:[["24","Tall + Drop","bar","3+3"],["21","Snatch","35","3"],["18","Snatch","45","3"],["15","Snatch","50","2"],["12","Snatch","53","1-2"],["9","Snatch","55","1"],["6","Snatch","58","1"],["3","Opener","61","1"]],
+       cj:[["21","Mid pause","bar","2"],["18","Power 1st","35","2"],["15","C&J","45","2"],["12","C&J","55","2"],["9","C&J","65","1"],["6","C&J","70","1"],["3","Opener","74","1"]]},
+   att:{sn:[["60","62","64"],["63","65","67"],["66","68","70"]], cj:[["70","72","74"],["74","76","78"],["78","80","82"]]},
+   strat:{sn:STRAT_SN+' Last meet went 62 / 65 / -68. 66 ties her comp PR, 67 ties gym, the planned 68 third is a PR.',
+          cj:'<b>Never take the opener in the back room.</b> Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 72 / -77 / 80. 80 ties her comp PR, 81 ties gym, 82 is new.'},
+   history:[{date:'—',meet:'Last comp',bw:'',sn:[{kg:62,st:'g'},{kg:65,st:'g'},{kg:68,st:'m'}],cj:[{kg:72,st:'g'},{kg:77,st:'m'},{kg:80,st:'g'}],total:145}],
+   refs:['66 · 67','80 · 81','145']}
 ];
 const ATHS={}; ATHLETES.forEach(x=>ATHS[x.id]=x);
 const IDS=ATHLETES.map(x=>x.id);
@@ -416,9 +422,11 @@ function renderAll(){
   const ini=initials();
   document.getElementById('athchips').innerHTML=ATHLETES.map(m=>
     '<button data-ath="'+m.id+'" style="--ac:'+m.color+'" onclick="setAth(\''+m.id+'\')">'+esc(ini[m.id])+'</button>').join('');
-  document.getElementById('sched-rows').innerHTML=ATHLETES.map(m=>
+  document.getElementById('sched-rows').innerHTML=
+    '<div class="shead"><span class="sn0">Lifter</span><span>Weigh-in</span><span class="sb">BW</span><span>Lift</span><span>Platform</span></div>'+
+    ATHLETES.map(m=>
     '<div class="srow" data-ath="'+m.id+'" style="--ac:'+m.color+'"><span class="sname" onclick="setAth(\''+m.id+'\')">'+esc(m.name)+'</span>'+
-    '<input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>').join('');
+    '<input class="swin" placeholder="w-in" value="'+esc(m.sched[0])+'"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="lift" value="'+esc(m.sched[1])+'"><input class="splat" placeholder="plat." value="'+esc(m.sched[2])+'"></div>').join('');
   document.getElementById('athletes').innerHTML=ATHLETES.map(renderAth).join('');
 }
 
@@ -451,13 +459,24 @@ function schedVals(a){
   return {win:r.querySelector('.swin').value, bw:r.querySelector('.sbw').value,
           sess:r.querySelector('.ssess').value, plat:r.querySelector('.splat').value};
 }
+function saveSched(){
+  const data={};
+  document.querySelectorAll('.srow').forEach(r=>{data[r.dataset.ath]=[r.querySelector('.swin').value,r.querySelector('.sbw').value,r.querySelector('.ssess').value,r.querySelector('.splat').value];});
+  gstore('sched',data);
+}
+function paintPlats(){
+  document.querySelectorAll('.srow .splat').forEach(i=>{
+    i.classList.toggle('red',/^\s*red/i.test(i.value));
+    i.classList.toggle('blue',/^\s*blue/i.test(i.value));
+  });
+}
 function renderSchedSum(){
   const s=schedVals(ATH), m=ATHS[ATH];
   const bits=[];
+  if(s.sess) bits.push('lift '+s.sess);
+  if(s.plat) bits.push(s.plat);
   if(s.win) bits.push('w-in '+s.win);
   if(s.bw) bits.push('BW '+s.bw);
-  if(s.sess) bits.push(s.sess);
-  if(s.plat) bits.push('plat '+s.plat);
   document.getElementById('sched-sum').textContent = m.name+' · '+(bits.length?bits.join(' · '):'tap to fill');
 }
 
@@ -784,7 +803,7 @@ function exportDay(btn){
   const a=ATH, m=ATHS[a], c=aEl(a);
   const sv=schedVals(a);
   const lines=[m.name+' · '+MEET.name+' · '+today()];
-  if(sv.win||sv.bw||sv.sess||sv.plat) lines.push(['weigh-in '+(sv.win||'—'),'BW '+(sv.bw||'—'),'session '+(sv.sess||'—'),'platform '+(sv.plat||'—')].join(' · '));
+  if(sv.win||sv.bw||sv.sess||sv.plat) lines.push(['weigh-in '+(sv.win||'—'),'BW '+(sv.bw||'—'),'lift '+(sv.sess||'—'),'platform '+(sv.plat||'—')].join(' · '));
   ['sn','cj'].forEach(key=>{
     const name=key==='sn'?'SNATCH':'C&J';
     const rows=[...c.querySelectorAll('.lift[data-lift="'+key+'"] .wu-row')].map(r=>{
@@ -841,10 +860,7 @@ document.addEventListener('input',e=>{
   }
   if(t.id==='cnum'){const v=parseInt(t.value);CNT[ATH][LIFTS[ATH]]=isNaN(v)?null:Math.max(0,v);HINT=false;gstore('cnt',CNT);t.classList.toggle('set',CNT[ATH][LIFTS[ATH]]!==null);pace();}
   if(t.classList.contains('swin')||t.classList.contains('sbw')||t.classList.contains('ssess')||t.classList.contains('splat')){
-    const data={};
-    document.querySelectorAll('.srow').forEach(r=>{data[r.dataset.ath]=[r.querySelector('.swin').value,r.querySelector('.sbw').value,r.querySelector('.ssess').value,r.querySelector('.splat').value];});
-    gstore('sched',data);
-    renderSchedSum();
+    saveSched(); paintPlats(); renderSchedSum();
   }
 });
 
@@ -876,9 +892,17 @@ IDS.forEach(a=>{
   renderForecast(a);
   suggAll(a);
 });
-const sched=gload('sched'); if(sched) document.querySelectorAll('.srow').forEach(r=>{ const s=sched[r.dataset.ath]; if(!s) return;
-  r.querySelector('.swin').value=s[0]||''; r.querySelector('.sbw').value=s[1]||''; r.querySelector('.ssess').value=s[2]||''; r.querySelector('.splat').value=s[3]||'';
+const sched=gload('sched')||{};
+const freshSched=gload('schedv')!==MEET.schedv;
+document.querySelectorAll('.srow').forEach(r=>{
+  const s=sched[r.dataset.ath], b=ATHS[r.dataset.ath].sched;
+  // new baked schedule replaces times and platform once; bodyweight is always the phone's
+  const pick=(i,bi)=>(freshSched||!s||!s[i])?(b[bi]||''):s[i];
+  r.querySelector('.swin').value=pick(0,0); r.querySelector('.sbw').value=(s&&s[1])||'';
+  r.querySelector('.ssess').value=pick(2,1); r.querySelector('.splat').value=pick(3,2);
 });
+if(freshSched){ saveSched(); gstore('schedv',MEET.schedv); }
+paintPlats();
 if(gload('schedopen')!==false) document.getElementById('sched').classList.add('open');
 const sath=gload('ath'); if(sath&&ATHS[sath]) ATH=sath;
 setAth(ATH);

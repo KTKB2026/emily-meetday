@@ -1,4 +1,4 @@
-const CACHE = 'emily-meetday-v9';
+const CACHE = 'emily-meetday-v10';
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html'])));
