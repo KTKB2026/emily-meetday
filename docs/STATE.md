@@ -66,9 +66,8 @@ Code: github.com/KTKB2026/emily-meetday, working copy at
 ## Where we left off
 
 Waiting on:
-1. Game-day sheets for Jacklyn, Amy, and Kristin (bake each into ATHLETES,
-   bump that athlete's planv). Chris's numbers come day-of, typed on the
-   phone.
+1. Done Oct 2 (v8): Jacklyn, Amy, and Kristin sheets baked in (planv 2).
+   Chris's numbers come day-of, typed on the phone.
 2. NE WSO exports after each session (bake into each lifter's history).
 3. Still open from Bay State: Dennis's export and Emily's results were
    never sent; their phone data is still viewable on the archive page.
