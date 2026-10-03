@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0e1116">
 <meta name="robots" content="noindex">
-<title>MASS Meet Day</title>
+<title>Bay State 2026 · MASS Meet Day</title>
 <style>
   :root{
     --ink:#0e1116; --panel:#171c24; --panel2:#1f2630; --line:#2c3540;
     --text:#e8ebef; --dim:#8b95a3;
     --sn:#e0a33c; --cj:#5fb4e6;
+    --em:#b287e8; --dn:#53c2b8;
     --good:#4cc38a; --warn:#e0a33c; --stop:#e0635a;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{background:var(--ink);color:var(--text);font-family:-apple-system,"SF Pro Text",Inter,system-ui,sans-serif;font-size:16px;line-height:1.45;padding:12px 14px 124px;max-width:560px;margin:0 auto}
   header{margin-bottom:10px}
-  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
-  .athchips{display:flex;gap:6px;flex-shrink:0}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .athchips{display:flex;gap:6px}
   .athchips button{width:34px;height:34px;border-radius:9px;background:var(--panel);border:1px solid var(--line);color:var(--dim);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
-  .athchips button.on{background:var(--panel2);color:var(--ac);border-color:var(--ac)}
+  .athchips button.on{background:var(--panel2);color:var(--text)}
+  .athchips button[data-ath="em"].on{color:var(--em);border-color:var(--em)}
+  .athchips button[data-ath="dn"].on{color:var(--dn);border-color:var(--dn)}
   h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
   .sub{color:var(--dim);font-size:12px;margin-top:4px}
 
@@ -36,7 +39,8 @@
   .sched-body{display:none;padding-bottom:4px}
   .sched.open .sched-body{display:block}
   .srow{display:flex;align-items:center;gap:6px;padding:7px 0;border-top:1px solid var(--line)}
-  .srow .sname{font-size:12px;font-weight:800;width:52px;flex-shrink:0;cursor:pointer;color:var(--ac);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .srow .sname{font-size:12px;font-weight:800;width:52px;flex-shrink:0;cursor:pointer}
+  .srow[data-ath="em"] .sname{color:var(--em)} .srow[data-ath="dn"] .sname{color:var(--dn)}
   .srow input{flex:1;min-width:0;background:var(--panel2);border-radius:6px;font-size:12px;padding:6px 5px;text-align:center}
   .srow input.sbw{flex:0 0 58px}
 
@@ -86,7 +90,7 @@
   #tb-sn.on{color:var(--sn)} #tb-cj.on{color:var(--cj)}
 
   /* LIFT CARDS */
-  .lift{background:var(--panel);border:1px solid var(--line);border-radius:14px 14px 0 0;overflow:hidden}
+  .lift{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .lift-head{display:flex;justify-content:space-between;align-items:baseline;padding:12px 14px 8px}
   .lift-name{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
   .lift.sn .lift-name{color:var(--sn)} .lift.cj .lift-name{color:var(--cj)}
@@ -162,6 +166,7 @@
   .row input.entry,.row input.refv{background:var(--panel2);border-radius:6px;font-size:14px;font-variant-numeric:tabular-nums;text-align:right;width:110px;padding:5px 8px}
   .note{font-size:13px;color:#c2c9d2;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:14px}
   .note b{color:var(--text)}
+  .hint{font-size:11px;color:var(--dim);text-align:center;margin:0 0 12px}
 
   .hist-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
   table{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}
@@ -170,11 +175,9 @@
   tbody:last-child tr:last-child td{border-bottom:none}
   td.mk{color:var(--good)} td.ms{color:var(--stop)}
   td.tot{font-weight:700}
-  td.empty{color:var(--dim);text-align:center;padding:14px 8px}
   .hist-note{font-size:11px;color:var(--dim);margin-top:8px}
   .hist-btns{display:flex;gap:8px;margin:12px 0}
   .hist-btns button{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);font:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:10px;cursor:pointer}
-  .archlink{display:block;text-align:center;margin:18px 0 4px;padding:11px;border:1px dashed var(--line);border-radius:10px;color:var(--dim);font-size:13px;text-decoration:none}
 
   /* records card */
   .recrow{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
@@ -184,14 +187,20 @@
 
   textarea.notes{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;min-height:140px;resize:vertical}
   .reset{margin-top:18px;width:100%;background:var(--panel);border:1px solid var(--line);color:var(--stop);font:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:11px;cursor:pointer}
+  .archbar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--dim)}
+  .archbar a{color:var(--text);font-weight:700;text-decoration:none;white-space:nowrap}
   footer{margin-top:22px;font-size:11px;color:var(--dim);text-align:center;line-height:1.6}
 </style>
 </head>
 <body>
 
+<div class="archbar"><span>Archive · Bay State Games, Jul 2026</span><a href="../../">Current meet &rsaquo;</a></div>
 <header>
-  <div class="eyebrow"><span>MASS meet day</span>
-    <div class="athchips" id="athchips"></div>
+  <div class="eyebrow"><span>MASS Strength · Meet day</span>
+    <div class="athchips">
+      <button data-ath="em" class="on" onclick="setAth('em')">E</button>
+      <button data-ath="dn" onclick="setAth('dn')">D</button>
+    </div>
   </div>
   <h1 id="hd-name"></h1>
   <div class="sub" id="hd-sub"></div>
@@ -200,7 +209,10 @@
 <!-- DAY SCHEDULE (collapsible) -->
 <div class="sched" id="sched">
   <div class="sched-head" onclick="toggleSched()"><span class="st">Day schedule</span><span class="sched-sum" id="sched-sum"></span><span class="chev">&#9656;</span></div>
-  <div class="sched-body" id="sched-rows"></div>
+  <div class="sched-body">
+    <div class="srow" data-ath="em"><span class="sname" onclick="setAth('em')">Emily</span><input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>
+    <div class="srow" data-ath="dn"><span class="sname" onclick="setAth('dn')">Dennis</span><input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>
+  </div>
 </div>
 
 <!-- STICKY: attempts-out counter · session clock -->
@@ -223,8 +235,211 @@
   <div class="st-take" id="take-line"></div>
 </div>
 
-<!-- athlete cards are rendered here from the ATHLETES list below -->
-<div id="athletes"></div>
+<!-- ================= EMILY ================= -->
+<div class="ath on" data-ath="em">
+
+<div class="tab on" data-tab="sn">
+<div class="lift sn" data-lift="sn" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Snatch</span><span class="lift-ref">comp PR 57 · gym PR 60</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <div class="wu-btns"><button class="wu-add" onclick="addRow(this)">+ Add set</button><button class="wu-edit" onclick="toggleEdit(this)">Edit</button></div>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="55"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="52"><span class="dot">·</span><input class="pl" inputmode="decimal" value="55"><span class="dot">·</span><input class="hi" inputmode="decimal" value="56"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="58"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="55"><span class="dot">·</span><input class="pl" inputmode="decimal" value="58"><span class="dot">·</span><input class="hi" inputmode="decimal" value="59"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="61"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="58"><span class="dot">·</span><input class="pl" inputmode="decimal" value="61"><span class="dot">·</span><input class="hi" inputmode="decimal" value="62"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg"></div>
+  <div class="strategy"><b>Opener is a bad-day weight.</b> After a miss the bar stays, repeat it. Easy make: nudge 1-2 toward the high number. One warm-up every ~3 attempts on the cards, not the clock. Other women jump 2-3 kg, count off the cards. 57 ties her comp PR, 58+ is a comp PR, 61 is gym-PR territory.</div>
+</div>
+<div class="strip">
+  <div class="strip-head"><span class="strip-title">Best snatch · totals with each C&amp;J</span><span class="strip-live sub-sn">&mdash;</span></div>
+  <div class="scen scen-sn"></div>
+</div>
+<div class="note"><b>Between lifts:</b> ~10 min break. Shoes loose, sip, small snack. Rebuild with the bar and the first two C&amp;J warm-ups, no heroics. Shoulder prep circuit if she needs it.</div>
+</div>
+
+<div class="tab" data-tab="cj">
+<div class="lift cj" data-lift="cj" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Clean &amp; Jerk</span><span class="lift-ref">comp PR 70 · gym PR 75</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <div class="wu-btns"><button class="wu-add" onclick="addRow(this)">+ Add set</button><button class="wu-edit" onclick="toggleEdit(this)">Edit</button></div>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="74"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="70"><span class="dot">·</span><input class="pl" inputmode="decimal" value="74"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="77"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="74"><span class="dot">·</span><input class="pl" inputmode="decimal" value="77"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="80"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="77"><span class="dot">·</span><input class="pl" inputmode="decimal" value="80"><span class="dot">·</span><input class="hi" inputmode="decimal" value=""></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg"></div>
+  <div class="strategy"><b>Never take the opener in the back room.</b> Last warm-up is 67, the opener happens on the platform. Last meet went -68 / -68 / 70: the opener must be automatic. Late C&amp;J warm-ups space wider, ~every 4 attempts. 71+ is a comp PR, 76+ is a gym PR.</div>
+</div>
+<div class="strip">
+  <div class="strip-head"><span class="strip-title">Total</span><span class="strip-live sub-cj">&mdash;</span></div>
+  <div class="scen scen-cj"></div>
+  <div class="tgt"><label>Target total</label><input class="target" inputmode="decimal" value="131"></div>
+  <div class="needs"></div>
+</div>
+</div>
+
+<div class="tab" data-tab="rules">
+<h2>Rules on the floor</h2>
+<div class="card">
+  <div class="row"><span class="k">Clock</span><span class="v">1:00 per attempt · following yourself 2:00 (&asymp; 2 attempts)</span></div>
+  <div class="row"><span class="k">Declare</span><span class="v">within 30 s of the clock starting</span></div>
+  <div class="row"><span class="k">Changes</span><span class="v">2 per attempt · bar never goes down</span></div>
+  <div class="row"><span class="k">After a make</span><span class="v">bar auto-rises +1 unless you declare</span></div>
+  <div class="row"><span class="k">After a miss</span><span class="v">repeat is the default call</span></div>
+  <div class="row"><span class="k">Entry total</span><input class="entry" inputmode="decimal" value="130" placeholder="kg"></div>
+  <div class="row"><span class="k">Openers rule</span><span class="v openers-line">&mdash;</span></div>
+</div>
+<h2>Warm-up pacing</h2>
+<div class="card">
+  <div class="row"><span class="k">Snatch</span><span class="v">one warm-up every ~3 attempts on the cards</span></div>
+  <div class="row"><span class="k">C&amp;J late sets</span><span class="v">space wider, ~every 4 attempts</span></div>
+  <div class="row"><span class="k">Counting</span><span class="v">cards, not the clock · women jump 2-3 kg</span></div>
+  <div class="row"><span class="k">Last warm-up</span><span class="v">opener minus ~5 · never the opener in the back</span></div>
+</div>
+</div>
+
+<div class="tab" data-tab="hist">
+<h2>Meet history</h2>
+<div class="hist-wrap">
+<table>
+<thead><tr><th>Date</th><th>Meet</th><th>BW</th><th colspan="3">Snatch</th><th colspan="3">C&amp;J</th><th>Total</th></tr></thead>
+<tbody class="meets"></tbody>
+<tbody>
+<tr><td>5/24/25</td><td>Puppies</td><td>65.70</td><td class="mk">50</td><td class="mk">55</td><td class="mk">57</td><td class="ms">68</td><td class="ms">68</td><td class="mk">70</td><td class="tot">127</td></tr>
+</tbody>
+</table>
+</div>
+<div class="hist-btns"><button onclick="saveMeet()">Save meet to history</button><button onclick="exportDay(this)">Export day</button></div>
+<div class="hist-note">Green = made, red = miss. Save meet logs today's marked attempts as a row on this phone. Export copies the whole day as text to paste anywhere.</div>
+<h2>Reference numbers</h2>
+<div class="card">
+  <div class="row"><span class="k">Snatch comp / gym PR</span><span class="v">57 · 60</span></div>
+  <div class="row"><span class="k">C&amp;J comp / gym PR</span><span class="v">70 · 75</span></div>
+  <div class="row"><span class="k">Best total</span><span class="v">127 (Puppies, 5/24/25)</span></div>
+</div>
+<h2>Records &amp; qualifying totals</h2>
+<div class="card">
+  <div class="recrow"><input class="recl" placeholder="e.g. QT — Nationals"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="e.g. State record, snatch"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>
+</div>
+</div>
+
+<div class="tab" data-tab="notes">
+<h2>Day notes</h2>
+<textarea class="notes" placeholder="Weigh-in, session start, card table quirks, how warm-ups moved..."></textarea>
+<button class="reset" onclick="resetDay()">Reset Emily's day</button>
+<footer>15 kg bar + collars = 20 · plate math is per side.<br>Edits save on this phone. Works offline after the first load.</footer>
+</div>
+
+</div><!-- /em -->
+
+<!-- ================= DENNIS ================= -->
+<div class="ath" data-ath="dn">
+
+<div class="tab on" data-tab="sn">
+<div class="lift sn" data-lift="sn" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Snatch</span><span class="lift-ref">comp PR 110 · training PR 110</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <div class="wu-btns"><button class="wu-add" onclick="addRow(this)">+ Add set</button><button class="wu-edit" onclick="toggleEdit(this)">Edit</button></div>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="105"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="100"><span class="dot">·</span><input class="pl" inputmode="decimal" value="105"><span class="dot">·</span><input class="hi" inputmode="decimal" value="110"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="110"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="105"><span class="dot">·</span><input class="pl" inputmode="decimal" value="110"><span class="dot">·</span><input class="hi" inputmode="decimal" value="115"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="115"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="110"><span class="dot">·</span><input class="pl" inputmode="decimal" value="115"><span class="dot">·</span><input class="hi" inputmode="decimal" value="120"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg"></div>
+  <div class="strategy"><b>Opener is a bad-day weight.</b> After a miss the bar stays, repeat it. Easy make: nudge toward the high number. One warm-up every ~3 attempts on the cards, not the clock. Last meet went 100 / 105 / -110: 110 ties the PR, anything over 110 is new territory, the planned 115 third is a 5 kg PR.</div>
+</div>
+<div class="strip">
+  <div class="strip-head"><span class="strip-title">Best snatch · totals with each C&amp;J</span><span class="strip-live sub-sn">&mdash;</span></div>
+  <div class="scen scen-sn"></div>
+</div>
+<div class="note"><b>Between lifts:</b> ~10 min break. Sip, small snack. Rebuild with the bar and the first two C&amp;J warm-ups, no heroics.</div>
+</div>
+
+<div class="tab" data-tab="cj">
+<div class="lift cj" data-lift="cj" style="margin-bottom:0;border-radius:14px 14px 0 0">
+  <div class="lift-head"><span class="lift-name">Clean &amp; Jerk</span><span class="lift-ref">comp PR 135 · training PR 135</span></div>
+  <div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>
+  <div class="wu-list"></div>
+  <div class="wu-btns"><button class="wu-add" onclick="addRow(this)">+ Add set</button><button class="wu-edit" onclick="toggleEdit(this)">Edit</button></div>
+  <div class="attempts">
+    <div class="att"><div class="lab">1st</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="125"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="120"><span class="dot">·</span><input class="pl" inputmode="decimal" value="125"><span class="dot">·</span><input class="hi" inputmode="decimal" value="130"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">2nd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="132"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="130"><span class="dot">·</span><input class="pl" inputmode="decimal" value="132"><span class="dot">·</span><input class="hi" inputmode="decimal" value="135"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+    <div class="att"><div class="lab">3rd</div><div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="140"><button class="stp" onclick="step(this,1)">+</button></div><div class="plates"></div><div class="rng"><input class="lo" inputmode="decimal" value="137"><span class="dot">·</span><input class="pl" inputmode="decimal" value="140"><span class="dot">·</span><input class="hi" inputmode="decimal" value="145"></div><div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>
+  </div>
+  <div class="sugg"></div>
+  <div class="strategy"><b>Never take the opener in the back room.</b> Last warm-up is 115-120, the opener happens on the platform. Late C&amp;J warm-ups space wider, ~every 4 attempts. Last meet went 120 / 130 / 135, all made: 135 ties the PR, the planned 140 third is a 5 kg PR.</div>
+</div>
+<div class="strip">
+  <div class="strip-head"><span class="strip-title">Total</span><span class="strip-live sub-cj">&mdash;</span></div>
+  <div class="scen scen-cj"></div>
+  <div class="tgt"><label>Target total</label><input class="target" inputmode="decimal" value=""></div>
+  <div class="needs"></div>
+</div>
+</div>
+
+<div class="tab" data-tab="rules">
+<h2>Rules on the floor</h2>
+<div class="card">
+  <div class="row"><span class="k">Clock</span><span class="v">1:00 per attempt · following yourself 2:00 (&asymp; 2 attempts)</span></div>
+  <div class="row"><span class="k">Declare</span><span class="v">within 30 s of the clock starting</span></div>
+  <div class="row"><span class="k">Changes</span><span class="v">2 per attempt · bar never goes down</span></div>
+  <div class="row"><span class="k">After a make</span><span class="v">bar auto-rises +1 unless you declare</span></div>
+  <div class="row"><span class="k">After a miss</span><span class="v">repeat is the default call</span></div>
+  <div class="row"><span class="k">Entry total</span><input class="entry" inputmode="decimal" value="240" placeholder="kg"></div>
+  <div class="row"><span class="k">Openers rule</span><span class="v openers-line">&mdash;</span></div>
+</div>
+<h2>Warm-up pacing</h2>
+<div class="card">
+  <div class="row"><span class="k">Snatch</span><span class="v">one warm-up every ~3 attempts on the cards</span></div>
+  <div class="row"><span class="k">C&amp;J late sets</span><span class="v">space wider, ~every 4 attempts</span></div>
+  <div class="row"><span class="k">Counting</span><span class="v">cards, not the clock · men jump 3-5 kg</span></div>
+  <div class="row"><span class="k">Last warm-up</span><span class="v">opener minus ~5 · never the opener in the back</span></div>
+</div>
+</div>
+
+<div class="tab" data-tab="hist">
+<h2>Meet history</h2>
+<div class="hist-wrap">
+<table>
+<thead><tr><th>Date</th><th>Meet</th><th>BW</th><th colspan="3">Snatch</th><th colspan="3">C&amp;J</th><th>Total</th></tr></thead>
+<tbody class="meets"></tbody>
+<tbody>
+<tr><td>&mdash;</td><td>Last comp</td><td>&mdash;</td><td class="mk">100</td><td class="mk">105</td><td class="ms">110</td><td class="mk">120</td><td class="mk">130</td><td class="mk">135</td><td class="tot">240</td></tr>
+</tbody>
+</table>
+</div>
+<div class="hist-btns"><button onclick="saveMeet()">Save meet to history</button><button onclick="exportDay(this)">Export day</button></div>
+<div class="hist-note">Green = made, red = miss. Last comp: snatch missed the 110 third, C&amp;J went 3 for 3. Save meet logs today's marked attempts as a row on this phone. Export copies the whole day as text to paste anywhere. Send Kyle the export and it gets baked into this card permanently.</div>
+<h2>Reference numbers</h2>
+<div class="card">
+  <div class="row"><span class="k">Snatch comp / training PR</span><input class="refv" value="110 · 110" placeholder="comp · gym"></div>
+  <div class="row"><span class="k">C&amp;J comp / training PR</span><input class="refv" value="135 · 135" placeholder="comp · gym"></div>
+  <div class="row"><span class="k">Best total</span><input class="refv" value="240" placeholder="kg"></div>
+</div>
+<h2>Records &amp; qualifying totals</h2>
+<div class="card">
+  <div class="recrow"><input class="recl" placeholder="e.g. QT — Nationals"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="e.g. State record, snatch"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>
+  <div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>
+</div>
+</div>
+
+<div class="tab" data-tab="notes">
+<h2>Day notes</h2>
+<textarea class="notes" placeholder="Weigh-in, session start, card table quirks, how warm-ups moved..."></textarea>
+<button class="reset" onclick="resetDay()">Reset Dennis's day</button>
+<footer>20 kg bar + collars = 25 · plate math is per side.<br>Edits save on this phone. Works offline after the first load.</footer>
+</div>
+
+</div><!-- /dn -->
 
 <!-- TAB BAR -->
 <div class="tabbar">
@@ -236,54 +451,32 @@
 </div>
 
 <script>
-/* =====================================================================
-   MEET + ATHLETES
-   To bake an athlete's sheet: fill their entry below and bump planv.
-   Bumping planv makes phones swap in the new warm-ups and attempts once
-   (saved meets, notes, and records are kept).
-   ===================================================================== */
-const MEET={id:'newso26', name:'NE WSO Championships', when:'Oct 3-4, 2026'};
-
-const BLANK_WU={
-  sn:[["24","Warm-up","",""],["21","Warm-up","",""],["18","Snatch","",""],["15","Snatch","",""],["12","Snatch","",""],["9","Snatch","",""],["6","Snatch","",""],["3","Snatch","",""]],
-  cj:[["21","Warm-up","",""],["18","Warm-up","",""],["15","C&J","",""],["12","C&J","",""],["9","C&J","",""],["6","C&J","",""],["3","C&J","",""]]
+/* ===== data & storage ===== */
+const VERSION='v3';
+const ATHS={
+  em:{name:'Emily', color:'#b287e8', meet:'Bay State Games',
+      sub:'Jul 18, 2026 · Natick · Entry 130 · Comp PRs: Sn 57 · C&J 70 · Total 127',
+      prTotal:127, cjCap:77, bar:15, planv:'1'},
+  dn:{name:'Dennis', color:'#53c2b8', meet:'Bay State Games',
+      sub:'Jul 19, 2026 · Natick · Entry 240 · Comp PRs: Sn 110 · C&J 135 · Total 240',
+      prTotal:240, cjCap:135, bar:20, planv:'2'}
 };
-const BLANK_ATT=[["","",""],["","",""],["","",""]]; // [low, plan, high] per attempt
-const STRAT_SN='<b>Opener is a bad-day weight.</b> After a miss the bar stays, repeat it. Easy make: nudge toward the high number. One warm-up every ~3 attempts on the cards, not the clock.';
-const STRAT_CJ='<b>Never take the opener in the back room.</b> Last warm-up around opener minus 5. Late C&amp;J warm-ups space wider, ~every 4 attempts.';
-const BLANK_SUB='numbers go in on the tabs, everything is editable';
+const DEFAULT_WU={
+  em:{sn:[["24","Flow","bar","3+3"],["21","Tempo","30","3"],["18","Tempo","35","3"],["15","Tempo","40","2"],["12","Snatch","45","2"],["9","Snatch","48","1"],["6","Snatch","50-51","1"],["3","Snatch","52-54","1"]],
+      cj:[["20","Bar","bar","2"],["18","Power","35","2"],["15","C&J","45","2"],["12","C&J","52","2"],["9","C&J","57","2"],["6","C&J","62","2"],["3","C&J","67","2"]]},
+  dn:{sn:[["21","Flow","bar","2"],["18","Snatch","50","2"],["15","Snatch","60","2"],["12","Snatch","70","1-2"],["9","Snatch","80","1"],["6","Snatch","90","1"],["3","Snatch","95","1"]],
+      cj:[["18","Flow","bar","2"],["15","Power","60","2"],["12","C&J","80","2"],["9","C&J","100","1"],["6","C&J","110","1"],["3","C&J","115-120","1"]]}
+};
+let ATH='em';
+let LIFTS={em:'sn',dn:'sn'};
+let CNT={em:{sn:null,cj:null},dn:{sn:null,cj:null}};
+let LASTSET={em:{sn:null,cj:null},dn:{sn:null,cj:null}};
+let HINT=false;
 
-const ATHLETES=[
-  {id:'jacklyn', name:'Jacklyn', color:'#ec8fbf', bar:15, jumps:'women jump 2-3 kg', planv:'1',
-   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
-   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
-   history:[], refs:['','','']},
-  {id:'amy', name:'Amy', color:'#b287e8', bar:15, jumps:'women jump 2-3 kg', planv:'1',
-   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
-   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
-   history:[], refs:['','','']},
-  {id:'chris', name:'Chris', color:'#53c2b8', bar:20, jumps:'men jump 3-5 kg', planv:'1',
-   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
-   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
-   history:[], refs:['','','']},
-  {id:'kristin', name:'Kristin', color:'#b9d35f', bar:15, jumps:'women jump 2-3 kg', planv:'1',
-   sub:BLANK_SUB, snRef:'', cjRef:'', prTotal:null, cjCap:null, entry:'', target:'',
-   wu:BLANK_WU, att:{sn:BLANK_ATT, cj:BLANK_ATT}, strat:{sn:STRAT_SN, cj:STRAT_CJ},
-   history:[], refs:['','','']}
-];
-const ATHS={}; ATHLETES.forEach(x=>ATHS[x.id]=x);
-const IDS=ATHLETES.map(x=>x.id);
-
-/* ===== storage =====
-   Athlete keys: md_<athleteId>_*   (history, records, plan carry across meets)
-   Meet keys:    md_<meetId>_*      (counter, clock, schedule for this meet)
-   The Bay State archive page uses its own unprefixed md_ keys; never wipe globally. */
 function store(k,v){ try{localStorage.setItem('md_'+k,JSON.stringify(v))}catch(e){} }
 function load(k){ try{const v=localStorage.getItem('md_'+k);return v?JSON.parse(v):null}catch(e){return null} }
-function gstore(k,v){ store(MEET.id+'_'+k,v); }
-function gload(k){ return load(MEET.id+'_'+k); }
+function wipe(pref){ try{Object.keys(localStorage).filter(k=>k.indexOf(pref||'md_')===0||k.indexOf('emily_')===0).forEach(k=>localStorage.removeItem(k))}catch(e){} }
 function f(n){ return (+n).toFixed(1).replace(/\.0$/,''); }
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function aEl(a){ return document.querySelector('.ath[data-ath="'+(a||ATH)+'"]'); }
 function athOf(el){ return el.closest('.ath').dataset.ath; }
 function plateText(kg,a){
@@ -297,136 +490,16 @@ function fmtElapsed(ms){
 }
 function today(){ const d=new Date(); return (d.getMonth()+1)+'/'+d.getDate()+'/'+String(d.getFullYear()).slice(2); }
 
-/* ===== state ===== */
-let ATH=IDS[0];
-let CNT={}, LASTSET={}, LIFTS={};
-IDS.forEach(id=>{ CNT[id]={sn:null,cj:null}; LASTSET[id]={sn:null,cj:null}; LIFTS[id]='sn'; });
-let HINT=false;
-
-/* ===== render ===== */
-function initials(){
-  const out={};
-  ATHLETES.forEach(x=>{
-    const one=x.name.charAt(0).toUpperCase();
-    const clash=ATHLETES.some(y=>y!==x&&y.name.charAt(0).toUpperCase()===one);
-    out[x.id]=clash?x.name.slice(0,2):one;
-  });
-  return out;
-}
-function attCell(lab,v){
-  return '<div class="att"><div class="lab">'+lab+'</div>'+
-    '<div class="kgrow"><button class="stp" onclick="step(this,-1)">&minus;</button><input class="kg" inputmode="decimal" value="'+esc(v[1])+'"><button class="stp" onclick="step(this,1)">+</button></div>'+
-    '<div class="plates"></div>'+
-    '<div class="rng"><input class="lo" inputmode="decimal" value="'+esc(v[0])+'"><span class="dot">·</span><input class="pl" inputmode="decimal" value="'+esc(v[1])+'"><span class="dot">·</span><input class="hi" inputmode="decimal" value="'+esc(v[2])+'"></div>'+
-    '<div class="rlab">low · plan · high</div><div class="mark" onclick="cycle(this)">SET</div></div>';
-}
-function liftCard(m,key){
-  const name=key==='sn'?'Snatch':'Clean &amp; Jerk';
-  const ref=(key==='sn'?m.snRef:m.cjRef)||'PRs on the History tab';
-  const labs=['1st','2nd','3rd'];
-  return '<div class="lift '+key+'" data-lift="'+key+'">'+
-    '<div class="lift-head"><span class="lift-name">'+name+'</span><span class="lift-ref">'+esc(ref)+'</span></div>'+
-    '<div class="wu-cols"><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div>'+
-    '<div class="wu-list"></div>'+
-    '<div class="wu-btns"><button class="wu-add" onclick="addRow(this)">+ Add set</button><button class="wu-edit" onclick="toggleEdit(this)">Edit</button></div>'+
-    '<div class="attempts">'+m.att[key].map((v,i)=>attCell(labs[i],v)).join('')+'</div>'+
-    '<div class="sugg"></div>'+
-    '<div class="strategy">'+m.strat[key]+'</div></div>';
-}
-function histRow(r){
-  const td=x=>'<td class="'+(x.st==='g'?'mk':x.st==='m'?'ms':'')+'">'+(x.kg?f(x.kg):'—')+'</td>';
-  return '<tr><td>'+esc(r.date)+'</td><td>'+esc(r.meet)+'</td><td>'+esc(r.bw||'—')+'</td>'+r.sn.map(td).join('')+r.cj.map(td).join('')+'<td class="tot">'+(r.total?f(r.total):'—')+'</td></tr>';
-}
-function renderAth(m){
-  const empty=!m.history.length;
-  return '<div class="ath" data-ath="'+m.id+'">'+
-  // snatch tab
-  '<div class="tab on" data-tab="sn">'+liftCard(m,'sn')+
-    '<div class="strip"><div class="strip-head"><span class="strip-title">Best snatch · totals with each C&amp;J</span><span class="strip-live sub-sn">&mdash;</span></div><div class="scen scen-sn"></div></div>'+
-    '<div class="note"><b>Between lifts:</b> ~10 min break. Sip, small snack. Rebuild with the bar and the first two C&amp;J warm-ups, no heroics.</div>'+
-  '</div>'+
-  // c&j tab
-  '<div class="tab" data-tab="cj">'+liftCard(m,'cj')+
-    '<div class="strip"><div class="strip-head"><span class="strip-title">Total</span><span class="strip-live sub-cj">&mdash;</span></div><div class="scen scen-cj"></div>'+
-    '<div class="tgt"><label>Target total</label><input class="target" inputmode="decimal" value="'+esc(m.target)+'"></div><div class="needs"></div></div>'+
-  '</div>'+
-  // rules tab
-  '<div class="tab" data-tab="rules"><h2>Rules on the floor</h2><div class="card">'+
-    '<div class="row"><span class="k">Clock</span><span class="v">1:00 per attempt · following yourself 2:00 (&asymp; 2 attempts)</span></div>'+
-    '<div class="row"><span class="k">Declare</span><span class="v">within 30 s of the clock starting</span></div>'+
-    '<div class="row"><span class="k">Changes</span><span class="v">2 per attempt · bar never goes down</span></div>'+
-    '<div class="row"><span class="k">After a make</span><span class="v">bar auto-rises +1 unless you declare</span></div>'+
-    '<div class="row"><span class="k">After a miss</span><span class="v">repeat is the default call</span></div>'+
-    '<div class="row"><span class="k">Entry total</span><input class="entry" inputmode="decimal" value="'+esc(m.entry)+'" placeholder="kg"></div>'+
-    '<div class="row"><span class="k">Openers rule</span><span class="v openers-line">&mdash;</span></div>'+
-  '</div><h2>Warm-up pacing</h2><div class="card">'+
-    '<div class="row"><span class="k">Snatch</span><span class="v">one warm-up every ~3 attempts on the cards</span></div>'+
-    '<div class="row"><span class="k">C&amp;J late sets</span><span class="v">space wider, ~every 4 attempts</span></div>'+
-    '<div class="row"><span class="k">Counting</span><span class="v">cards, not the clock · '+esc(m.jumps)+'</span></div>'+
-    '<div class="row"><span class="k">Last warm-up</span><span class="v">opener minus ~5 · never the opener in the back</span></div>'+
-  '</div></div>'+
-  // history tab
-  '<div class="tab" data-tab="hist"><h2>Meet history</h2><div class="hist-wrap"><table>'+
-    '<thead><tr><th>Date</th><th>Meet</th><th>BW</th><th colspan="3">Snatch</th><th colspan="3">C&amp;J</th><th>Total</th></tr></thead>'+
-    '<tbody class="meets"></tbody>'+
-    '<tbody class="baked">'+(empty?'':m.history.map(histRow).join(''))+'</tbody>'+
-  '</table></div>'+
-    '<div class="hist-btns"><button onclick="saveMeet()">Save meet to history</button><button onclick="exportDay(this)">Export day</button></div>'+
-    '<div class="hist-note">Green = made, red = miss. Save meet logs today\'s marked attempts as a row on this phone. Export copies the whole day as text. Send it to Claude and it gets baked into this card for good.</div>'+
-    '<h2>Reference numbers</h2><div class="card">'+
-      '<div class="row"><span class="k">Snatch comp / gym PR</span><input class="refv" value="'+esc(m.refs[0])+'" placeholder="comp · gym"></div>'+
-      '<div class="row"><span class="k">C&amp;J comp / gym PR</span><input class="refv" value="'+esc(m.refs[1])+'" placeholder="comp · gym"></div>'+
-      '<div class="row"><span class="k">Best total</span><input class="refv" value="'+esc(m.refs[2])+'" placeholder="kg"></div>'+
-    '</div>'+
-    '<h2>Records &amp; qualifying totals</h2><div class="card">'+
-      '<div class="recrow"><input class="recl" placeholder="e.g. QT for nationals"><input class="recv" placeholder="kg"></div>'+
-      '<div class="recrow"><input class="recl" placeholder="e.g. WSO record, snatch"><input class="recv" placeholder="kg"></div>'+
-      '<div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>'+
-      '<div class="recrow"><input class="recl" placeholder="label"><input class="recv" placeholder="kg"></div>'+
-    '</div>'+
-    '<a class="archlink" href="archive/bay-state-2026/">Past meet: Bay State Games, Jul 2026 (Emily, Dennis) &rsaquo;</a>'+
-  '</div>'+
-  // notes tab
-  '<div class="tab" data-tab="notes"><h2>Day notes</h2>'+
-    '<textarea class="notes" placeholder="Weigh-in, session start, card table quirks, how warm-ups moved..."></textarea>'+
-    '<button class="reset" onclick="resetDay()">Reset '+esc(m.name)+'\'s day</button>'+
-    '<footer>'+m.bar+' kg bar + collars = '+(m.bar+5)+' · plate math is per side.<br>Edits save on this phone. Works offline after the first load.</footer>'+
-  '</div>'+
-  '</div>';
-}
-function renderAll(){
-  const ini=initials();
-  document.getElementById('athchips').innerHTML=ATHLETES.map(m=>
-    '<button data-ath="'+m.id+'" style="--ac:'+m.color+'" onclick="setAth(\''+m.id+'\')">'+esc(ini[m.id])+'</button>').join('');
-  document.getElementById('sched-rows').innerHTML=ATHLETES.map(m=>
-    '<div class="srow" data-ath="'+m.id+'" style="--ac:'+m.color+'"><span class="sname" onclick="setAth(\''+m.id+'\')">'+esc(m.name)+'</span>'+
-    '<input class="swin" placeholder="w-in time"><input class="sbw" inputmode="decimal" placeholder="BW kg"><input class="ssess" placeholder="session"><input class="splat" placeholder="plat."></div>').join('');
-  document.getElementById('athletes').innerHTML=ATHLETES.map(renderAth).join('');
-}
-
 /* ===== athlete + tabs ===== */
 function setAth(a){
-  ATH=a; gstore('ath',a);
+  ATH=a; store('ath',a);
   document.querySelectorAll('.ath').forEach(el=>el.classList.toggle('on',el.dataset.ath===a));
   document.querySelectorAll('.athchips button').forEach(b=>b.classList.toggle('on',b.dataset.ath===a));
-  const t=gload('tab')||'sn';
-  aEl().querySelectorAll('.tab').forEach(p=>p.classList.toggle('on',p.dataset.tab===t));
   renderHead(); renderSchedSum(); syncCnum(); pace(); tickClock();
-}
-function setTab(t){
-  document.querySelectorAll('.ath .tab').forEach(p=>p.classList.toggle('on',p.dataset.tab===t));
-  ['sn','cj','rules','hist','notes'].forEach(x=>document.getElementById('tb-'+x).classList.toggle('on',x===t));
-  if(t==='sn'||t==='cj'){ LIFTS[ATH]=t; gstore('lifts',LIFTS); syncCnum(); pace(); tickClock(); }
-  gstore('tab',t);
-}
-function renderHead(){
-  const m=ATHS[ATH];
-  document.getElementById('hd-name').textContent=m.name+' — '+MEET.name;
-  document.getElementById('hd-sub').textContent=MEET.when+' · '+m.sub;
 }
 function toggleSched(){
   const open=document.getElementById('sched').classList.toggle('open');
-  gstore('schedopen',open);
+  store('schedopen',open);
 }
 function schedVals(a){
   const r=document.querySelector('.srow[data-ath="'+a+'"]');
@@ -440,7 +513,18 @@ function renderSchedSum(){
   if(s.bw) bits.push('BW '+s.bw);
   if(s.sess) bits.push(s.sess);
   if(s.plat) bits.push('plat '+s.plat);
-  document.getElementById('sched-sum').textContent = m.name+' · '+(bits.length?bits.join(' · '):'tap to fill');
+  document.getElementById('sched-sum').textContent = m.name.charAt(0)+' · '+(bits.length?bits.join(' · '):'tap to fill');
+}
+function setTab(t){
+  document.querySelectorAll('.ath .tab').forEach(p=>p.classList.toggle('on',p.dataset.tab===t));
+  ['sn','cj','rules','hist','notes'].forEach(x=>document.getElementById('tb-'+x).classList.toggle('on',x===t));
+  if(t==='sn'||t==='cj'){ LIFTS[ATH]=t; store('lifts',LIFTS); syncCnum(); pace(); tickClock(); }
+  store('tab',t);
+}
+function renderHead(){
+  const m=ATHS[ATH];
+  document.getElementById('hd-name').textContent=m.name+' — '+m.meet;
+  document.getElementById('hd-sub').textContent=m.sub;
 }
 
 /* ===== session clock + last-set gap ===== */
@@ -448,13 +532,14 @@ let clockInt=null, clockStart=null;
 function clockTap(){
   if(clockStart) return;
   clockStart=Date.now();
-  gstore('ckstart',clockStart);
+  store('ckstart',clockStart);
   startTick();
 }
 function clockReset(){
-  clockStart=null; gstore('ckstart',null);
+  clockStart=null; store('ckstart',null);
   clearInterval(clockInt); clockInt=null;
-  document.getElementById('clock').classList.remove('run');
+  const c=document.getElementById('clock');
+  c.classList.remove('run');
   document.getElementById('cl-time').textContent='0:00';
   document.getElementById('cl-sub').textContent='tap to start';
   document.getElementById('cl-sub').classList.remove('slow');
@@ -485,7 +570,7 @@ function bump(d){
   const cur=CNT[ATH][LIFTS[ATH]];
   CNT[ATH][LIFTS[ATH]]=Math.max(0,(cur===null?0:cur)+d);
   HINT=false;
-  gstore('cnt',CNT); syncCnum(); pace();
+  store('cnt',CNT); syncCnum(); pace();
 }
 function syncCnum(){
   const el=document.getElementById('cnum');
@@ -524,16 +609,16 @@ function renderTake(){
   }
   const lift=LIFTS[ATH], cnt=CNT[ATH][lift];
   const m=ATHS[ATH];
-  const tag='<span class="tl-lift" style="color:'+m.color+'">'+esc(m.name.toUpperCase())+' '+lift.toUpperCase()+'</span> · ';
+  const tag='<span class="tl-lift" style="color:'+m.color+'">'+m.name.toUpperCase()+' '+lift.toUpperCase()+'</span> · ';
   if(cnt===null){ el.classList.remove('show'); el.innerHTML=''; return; }
   el.classList.add('show');
-  if(cnt===0){ el.innerHTML=tag+'Up now.'; return; }
+  if(cnt===0){ el.innerHTML=tag+(m.name==='Emily'?'She’s up.':'He’s up.'); return; }
   const l=aEl().querySelector('.lift[data-lift="'+lift+'"]');
   const rows=[...l.querySelectorAll('.wu-row')];
   const next=rows.find(r=>!r.classList.contains('done') && !isNaN(parseInt(r.querySelector('.aout').value)));
   if(!next){ el.innerHTML=tag+'Warm-ups done · '+cnt+' attempts out.'; return; }
   const av=parseInt(next.querySelector('.aout').value);
-  const kg=esc(next.querySelector('.wkg').value)||'next set', reps=esc(next.querySelector('.reps').value);
+  const kg=next.querySelector('.wkg').value||'next set', reps=next.querySelector('.reps').value;
   const set=kg+(reps?' × '+reps:'');
   if(cnt>av){ el.innerHTML=tag+'Next: '+set+' at '+av+' out.'; }
   else if(cnt===av){ el.classList.add('due'); el.innerHTML=tag+'TAKE NOW: '+set+'.'; }
@@ -549,7 +634,7 @@ function makeRow(list,aout,set,kg,reps,done){
     row.classList.toggle('done');
     if(row.classList.contains('done')){
       const a=athOf(row), key=row.closest('.lift').dataset.lift;
-      LASTSET[a][key]=Date.now(); gstore('lastset',LASTSET); tickClock();
+      LASTSET[a][key]=Date.now(); store('lastset',LASTSET); tickClock();
     }
     saveWU(athOf(row)); pace();
   };
@@ -599,7 +684,7 @@ function initWU(a){
   const saved=load(a+'_wu');
   aEl(a).querySelectorAll('.lift[data-lift]').forEach(l=>{
     const key=l.dataset.lift, list=l.querySelector('.wu-list');
-    const rows=(saved&&saved[key])?saved[key]:ATHS[a].wu[key].map(r=>[r[0],r[1],r[2],r[3],false]);
+    const rows=(saved&&saved[key]&&saved[key].length)?saved[key]:DEFAULT_WU[a][key].map(r=>[r[0],r[1],r[2],r[3],false]);
     rows.forEach(r=>makeRow(list,r[0],r[1],r[2],r[3],r[4]));
   });
 }
@@ -686,11 +771,11 @@ function restoreAtts(a){
       x.querySelector('.lo').value=arr[i].lo;
       x.querySelector('.pl').value=arr[i].pl;
       x.querySelector('.hi').value=arr[i].hi;
-      const mk=x.querySelector('.mark');
+      const m=x.querySelector('.mark');
       x.classList.remove('good','miss');
-      if(arr[i].st==='g'){x.classList.add('good');mk.textContent='✓ GOOD';}
-      else if(arr[i].st==='m'){x.classList.add('miss');mk.textContent='✗ MISS';}
-      else mk.textContent='SET';
+      if(arr[i].st==='g'){x.classList.add('good');m.textContent='✓ GOOD';}
+      else if(arr[i].st==='m'){x.classList.add('miss');m.textContent='✗ MISS';}
+      else m.textContent='SET';
     });
   });
 }
@@ -717,7 +802,7 @@ function renderForecast(a){
   if(m.prTotal&&tot){ const d=tot-m.prTotal; tiles+='<div class="s"><div class="sl">vs PR '+m.prTotal+'</div><div class="sv '+(d>=0?'ok':'halt')+'">'+(d>=0?'+':'')+f(d)+'</div></div>'; }
   const entry=parseFloat(c.querySelector('.entry').value);
   if(!isNaN(entry)&&tot){ const d=tot-entry; tiles+='<div class="s"><div class="sl">vs entry '+f(entry)+'</div><div class="sv '+(d>=0?'ok':'cau')+'">'+(d>=0?'+':'')+f(d)+'</div></div>'; }
-  tiles+='<div class="s"><div class="sl">best sn + cj</div><div class="sv">'+((snRes.val||cjRes.val)?f(snRes.val)+' + '+f(cjRes.val):'&mdash;')+'</div></div>';
+  tiles+='<div class="s"><div class="sl">best sn + cj</div><div class="sv">'+f(snRes.val)+' + '+f(cjRes.val)+'</div></div>';
   c.querySelector('.scen-cj').innerHTML=tiles;
   const tgt=parseFloat(c.querySelector('.target').value);
   const nEl=c.querySelector('.needs');
@@ -728,7 +813,7 @@ function renderForecast(a){
       const need=tgt-snRes.val;
       const hi3=cj[2].hi||cj[2].pl||cj[2].kg;
       nEl.textContent='Needs C&J ≥ '+f(need)+' for '+f(tgt)+'.';
-      nEl.className='needs '+(hi3?(need<=hi3?'ok':(m.cjCap&&need<=m.cjCap?'cau':'halt')):(m.cjCap?(need<=m.cjCap?'cau':'halt'):''));
+      nEl.className='needs '+(hi3?(need<=hi3?'ok':(m.cjCap&&need<=m.cjCap?'cau':'halt')):(m.cjCap?(need<=m.cjCap?'cau':'halt'):'needs'));
     }
   } else { nEl.textContent=''; nEl.className='needs'; }
   const oEl=c.querySelector('.openers-line');
@@ -741,12 +826,13 @@ function renderForecast(a){
 }
 
 /* ===== save meet, export, reset ===== */
+function markTd(x){ return '<td class="'+(x.st==='g'?'mk':x.st==='m'?'ms':'')+'">'+(x.kg?f(x.kg):'—')+'</td>'; }
 function saveMeet(){
-  const a=ATH;
+  const a=ATH, m=ATHS[a];
   const sn=liftState('sn',a), cj=liftState('cj',a);
   if(!anyMarked(sn)&&!anyMarked(cj)){ alert('Nothing marked yet. Mark attempts good or miss first.'); return; }
   const bs=bestGood(sn), bc=bestGood(cj);
-  const rec={date:today(), meet:MEET.name, bw:schedVals(a).bw||'', sn:sn.map(x=>({kg:x.kg,st:x.st})), cj:cj.map(x=>({kg:x.kg,st:x.st})), total:(bs&&bc)?bs+bc:0};
+  const rec={date:today(), meet:m.meet, bw:schedVals(a).bw||'', sn:sn.map(x=>({kg:x.kg,st:x.st})), cj:cj.map(x=>({kg:x.kg,st:x.st})), total:(bs&&bc)?bs+bc:0};
   const meets=load(a+'_meets')||[];
   meets.unshift(rec);
   store(a+'_meets',meets);
@@ -756,16 +842,14 @@ function saveMeet(){
 function renderMeets(a){
   const body=aEl(a).querySelector('tbody.meets');
   const meets=load(a+'_meets')||[];
-  if(!meets.length && !ATHS[a].history.length){
-    body.innerHTML='<tr><td class="empty" colspan="10">No meets logged yet. Save meet adds today’s.</td></tr>';
-    return;
-  }
-  body.innerHTML=meets.map(histRow).join('');
+  body.innerHTML=meets.map(r=>
+    '<tr><td>'+r.date+'</td><td>'+r.meet+'</td><td>'+(r.bw||'—')+'</td>'+r.sn.map(markTd).join('')+r.cj.map(markTd).join('')+
+    '<td class="tot">'+(r.total?f(r.total):'—')+'</td></tr>').join('');
 }
 function exportDay(btn){
   const a=ATH, m=ATHS[a], c=aEl(a);
   const sv=schedVals(a);
-  const lines=[m.name+' · '+MEET.name+' · '+today()];
+  const lines=[m.name+' · '+m.meet+' · '+today()];
   if(sv.win||sv.bw||sv.sess||sv.plat) lines.push(['weigh-in '+(sv.win||'—'),'BW '+(sv.bw||'—'),'session '+(sv.sess||'—'),'platform '+(sv.plat||'—')].join(' · '));
   ['sn','cj'].forEach(key=>{
     const name=key==='sn'?'SNATCH':'C&J';
@@ -792,14 +876,14 @@ function resetDay(){
   const m=ATHS[ATH];
   if(!confirm('Reset '+m.name+"'s day? Clears checkmarks, good/miss marks, counters, and day notes. All weights, saved meets, and records stay.")) return;
   const c=aEl(ATH);
-  c.querySelectorAll('.wu-list').forEach(l=>l.classList.remove('editing'));
+  c.querySelectorAll('.wu-list').forEach(l=>{l.classList.remove('editing');});
   c.querySelectorAll('.wu-edit').forEach(b=>{b.classList.remove('on');b.textContent='Edit';});
   c.querySelectorAll('.wu-row').forEach(r=>r.classList.remove('done'));
   c.querySelectorAll('.att').forEach(x=>{x.classList.remove('good','miss');x.querySelector('.mark').textContent='SET';});
-  c.querySelector('.notes').value='';
+  const n=c.querySelector('.notes'); n.value='';
   try{localStorage.removeItem('md_'+ATH+'_notes')}catch(e){}
   CNT[ATH]={sn:null,cj:null}; LASTSET[ATH]={sn:null,cj:null};
-  gstore('cnt',CNT); gstore('lastset',LASTSET);
+  store('cnt',CNT); store('lastset',LASTSET);
   saveWU(ATH); saveAtts(ATH);
   syncCnum(); pace(); renderForecast(ATH); suggAll(ATH);
 }
@@ -821,54 +905,53 @@ document.addEventListener('input',e=>{
       store(a+'_ref',[...ac.querySelectorAll('.refv')].map(i=>i.value));
     }
   }
-  if(t.id==='cnum'){const v=parseInt(t.value);CNT[ATH][LIFTS[ATH]]=isNaN(v)?null:Math.max(0,v);HINT=false;gstore('cnt',CNT);t.classList.toggle('set',CNT[ATH][LIFTS[ATH]]!==null);pace();}
+  if(t.id==='cnum'){const v=parseInt(t.value);CNT[ATH][LIFTS[ATH]]=isNaN(v)?null:Math.max(0,v);HINT=false;store('cnt',CNT);t.classList.toggle('set',CNT[ATH][LIFTS[ATH]]!==null);pace();}
   if(t.classList.contains('swin')||t.classList.contains('sbw')||t.classList.contains('ssess')||t.classList.contains('splat')){
     const data={};
     document.querySelectorAll('.srow').forEach(r=>{data[r.dataset.ath]=[r.querySelector('.swin').value,r.querySelector('.sbw').value,r.querySelector('.ssess').value,r.querySelector('.splat').value];});
-    gstore('sched',data);
+    store('sched',data);
     renderSchedSum();
   }
 });
+// attempt kg taps should not bubble anywhere odd
+document.querySelectorAll('.att input').forEach(i=>i.addEventListener('click',e=>e.stopPropagation()));
 
 /* ===== init ===== */
-renderAll();
-document.querySelectorAll('.att input').forEach(i=>i.addEventListener('click',e=>e.stopPropagation()));
-const sc=gload('cnt'), sl=gload('lastset'), sf=gload('lifts');
-IDS.forEach(id=>{
-  if(sc&&sc[id]) CNT[id]=Object.assign({sn:null,cj:null},sc[id]);
-  if(sl&&sl[id]) LASTSET[id]=Object.assign({sn:null,cj:null},sl[id]);
-  if(sf&&(sf[id]==='sn'||sf[id]==='cj')) LIFTS[id]=sf[id];
-});
-IDS.forEach(a=>{
-  // new baked plan for this athlete: swap in its warm-ups and attempts once
+// archive: never wipe. The live app shares this browser storage.
+if(load('v')!==VERSION){ store('v',VERSION); }
+CNT=load('cnt')||CNT;
+LASTSET=load('lastset')||LASTSET;
+LIFTS=load('lifts')||LIFTS;
+['em','dn'].forEach(a=>{
+  // baked-plan version: when the repo ships a new plan for this athlete,
+  // drop the stored warm-ups/attempts so the new plan shows (meets, notes, records kept)
   if(load(a+'_planv')!==ATHS[a].planv){
     try{localStorage.removeItem('md_'+a+'_wu');localStorage.removeItem('md_'+a+'_atts');}catch(e){}
     store(a+'_planv',ATHS[a].planv);
   }
   initWU(a);
   restoreAtts(a);
-  const c=aEl(a);
-  const tg=load(a+'_target'); if(tg!==null) c.querySelector('.target').value=tg;
-  const en=load(a+'_entry'); if(en!==null) c.querySelector('.entry').value=en;
-  const no=load(a+'_notes'); if(no) c.querySelector('.notes').value=no;
-  const recs=load(a+'_recs'); if(recs) [...c.querySelectorAll('.recrow')].forEach((r,i)=>{ if(recs[i]){r.querySelector('.recl').value=recs[i][0];r.querySelector('.recv').value=recs[i][1];} });
-  const ref=load(a+'_ref'); if(ref) [...c.querySelectorAll('.refv')].forEach((inp,i)=>{ if(ref[i]!==undefined) inp.value=ref[i]; });
+  const tg=load(a+'_target'); if(tg!==null&&tg!==undefined) aEl(a).querySelector('.target').value=tg;
+  const en=load(a+'_entry'); if(en!==null&&en!==undefined) aEl(a).querySelector('.entry').value=en;
+  const no=load(a+'_notes'); if(no) aEl(a).querySelector('.notes').value=no;
+  const recs=load(a+'_recs'); if(recs) [...aEl(a).querySelectorAll('.recrow')].forEach((r,i)=>{ if(recs[i]){r.querySelector('.recl').value=recs[i][0];r.querySelector('.recv').value=recs[i][1];} });
+  const ref=load(a+'_ref'); if(ref) [...aEl(a).querySelectorAll('.refv')].forEach((inp,i)=>{ if(ref[i]!==undefined) inp.value=ref[i]; });
   renderMeets(a);
   refreshPlates(a);
   renderForecast(a);
   suggAll(a);
 });
-const sched=gload('sched'); if(sched) document.querySelectorAll('.srow').forEach(r=>{ const s=sched[r.dataset.ath]; if(!s) return;
-  r.querySelector('.swin').value=s[0]||''; r.querySelector('.sbw').value=s[1]||''; r.querySelector('.ssess').value=s[2]||''; r.querySelector('.splat').value=s[3]||'';
+const sched=load('sched'); if(sched) document.querySelectorAll('.srow').forEach(r=>{ const s=sched[r.dataset.ath]; if(!s) return;
+  if(s.length===3){ r.querySelector('.swin').value=s[0];r.querySelector('.ssess').value=s[1];r.querySelector('.splat').value=s[2]; }
+  else { r.querySelector('.swin').value=s[0]||'';r.querySelector('.sbw').value=s[1]||'';r.querySelector('.ssess').value=s[2]||'';r.querySelector('.splat').value=s[3]||''; }
 });
-if(gload('schedopen')!==false) document.getElementById('sched').classList.add('open');
-const sath=gload('ath'); if(sath&&ATHS[sath]) ATH=sath;
+if(load('schedopen')!==false) document.getElementById('sched').classList.add('open');
+const sath=load('ath'); if(sath&&ATHS[sath]) ATH=sath;
 setAth(ATH);
-setTab(gload('tab')||'sn');
-const cks=gload('ckstart'); if(cks){ clockStart=cks; startTick(); }
-if(!clockInt&&IDS.some(id=>LASTSET[id].sn||LASTSET[id].cj)){ clockInt=setInterval(tickClock,500); tickClock(); }
+const stab=load('tab'); setTab(stab||'sn');
+const cks=load('ckstart'); if(cks){ clockStart=cks; startTick(); }
+if(!clockInt&&(LASTSET.em.sn||LASTSET.em.cj||LASTSET.dn.sn||LASTSET.dn.cj)){ clockInt=setInterval(tickClock,500); tickClock(); }
 pace();
-if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
 </html>

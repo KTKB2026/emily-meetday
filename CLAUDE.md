@@ -19,6 +19,11 @@ Workflow rules (Kyle wants version safety):
   athlete's history table so they live in the repo, not just his phone.
 
 Athletes are data inside this one app. Do not create per-athlete repos.
+As of v7 the athletes live in the ATHLETES list at the top of the script
+and the page renders their cards; to bake a sheet, edit that athlete's
+entry and bump its planv. MEET holds the current meet; meet-level storage
+keys are md_<meetId>_*. Past meets are frozen copies under archive/, and
+archive copies must never wipe localStorage.
 Per-athlete bar weights: ATHS[..].bar (women 15, men 20); plate math
 assumes bar + 2.5 kg collars.
 
